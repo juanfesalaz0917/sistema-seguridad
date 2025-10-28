@@ -4,6 +4,7 @@ import DarkModeSwitcher from './DarkModeSwitcher';
 import DropdownMessage from './DropdownMessage';
 import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
+import UiLibrarySwitcher from './UiLibrarySwitcher';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
@@ -111,7 +112,8 @@ const Header = (props: {
             <DropdownMessage />
             {/* <!-- Chat Notification Area --> */}
           </ul>
-
+          {/* Selector de librería */}
+          <UiLibrarySwitcher />
           {/* <!-- User Area --> */}
           <DropdownUser />
           {/* <!-- User Area --> */}
