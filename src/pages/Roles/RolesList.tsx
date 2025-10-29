@@ -1,4 +1,4 @@
-import { Role } from "../../models/Roles";
+import { Role } from "../../models/Role";
 import React, { useState } from "react";
 import GenericTable from "../../components/GenericTable";
 
