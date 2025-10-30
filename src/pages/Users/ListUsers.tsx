@@ -91,15 +91,15 @@ const ListUsers: React.FC = () => {
   const columns = ["id", "name", "email"];
 
   const actions: Action[] = [
-    { name: "view", label: "Ver" },
-    { name: "edit", label: "Editar" },
-    { name: "delete", label: "Eliminar" },
-    { name: "profile", label: "Perfil" },
-    { name: "address", label: "Dirección" },
-    { name: "digital-signature", label: "Firma Digital" },
-    { name: "devices", label: "Dispositivos" },
-    { name: "passwords", label: "Contraseñas" },
-    { name: "sessions", label: "Sesiones" }
+    { name: "view", label: "View" },
+    { name: "edit", label: "Update" },
+    { name: "delete", label: "Delete" },
+    { name: "profile", label: "Profile" },
+    { name: "address", label: "Adress" },
+    { name: "digital-signature", label: "Digital Signature" },
+    { name: "devices", label: "Devices" },
+    { name: "passwords", label: "Passwords" },
+    { name: "sessions", label: "Sessions" }
   ];
 
   return (
