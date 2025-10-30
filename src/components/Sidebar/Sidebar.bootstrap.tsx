@@ -11,10 +11,10 @@ const SidebarBootstrap: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen 
   const cls = `sidebar-bootstrap ${sidebarOpen ? "open" : "closed"}`;
 
   return (
-    <aside className={cls} aria-hidden={!sidebarOpen} role="navigation">
+    <aside className={cls} aria-hidden={!sidebarOpen} role="navigation" >
       <div className="d-flex align-items-center justify-content-between p-3 border-bottom" style={{background:'transparent'}}>
         <div className="d-flex align-items-center gap-2">
-          <div style={{ width: 80, height: 36, borderRadius: 8, background: '#091430ff' }} />
+          <div style={{ width: 36, height: 36, borderRadius: 8, background: '#091430ff' }} />
           <h4 className="m-0" style={{color:'#E6EEFA', fontWeight:700}}>TailAdmin</h4>
         </div>
         <button
