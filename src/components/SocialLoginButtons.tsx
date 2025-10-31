@@ -1,7 +1,7 @@
 // src/components/SocialLoginButtons.tsx
 import React from "react";
 import { OAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../firebaseMicrosoftConfig"; // Ajusta la ruta según tu estructura
+import { auth } from "../firebaseConfig"; // Ajusta la ruta según tu estructura
 
 const MicrosoftLoginTest: React.FC = () => {
   const handleMicrosoftLogin = async () => {
