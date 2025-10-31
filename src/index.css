@@ -161,3 +161,13 @@ span.flatpickr-weekday,
 [x-cloak] {
   display: none !important;
 }
+
+sidebar-bootstrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 100px; ;
+}
+
+
+

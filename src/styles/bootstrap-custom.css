@@ -1,0 +1,108 @@
+/* src/styles/bootstrap-custom.css */
+
+/* ==========================================
+   ESTILOS PERSONALIZADOS PARA BOOTSTRAP
+   ========================================== */
+
+/* Wrapper de la tabla */
+.bootstrap-table-wrapper {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* Mejoras para la tabla */
+.bootstrap-table-wrapper .table {
+  margin-bottom: 0;
+}
+
+.bootstrap-table-wrapper .table thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  white-space: nowrap;
+}
+
+.bootstrap-table-wrapper .table tbody td {
+  padding: 12px 16px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bootstrap-table-wrapper .table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Hover effect mejorado */
+.bootstrap-table-wrapper .table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+/* Estilos para botones de acción */
+.bootstrap-table-wrapper .btn-group-sm .btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.bootstrap-table-wrapper .btn-group .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+.table-responsive {
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .bootstrap-table-wrapper .table thead th,
+  .bootstrap-table-wrapper .table tbody td {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+  }
+  
+  .bootstrap-table-wrapper .btn-group-sm .btn {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+/* Loading spinner personalizado */
+.bootstrap-table-wrapper .spinner-border {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Empty state */
+.bootstrap-table-wrapper .bi-inbox {
+  color: #dee2e6;
+}
+
+/* Truncate text in cells */
+.bootstrap-table-wrapper .text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Striped rows mejoradas */
+.bootstrap-table-wrapper .table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Bordered table mejorada */
+.bootstrap-table-wrapper .table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.bootstrap-table-wrapper .table-bordered th,
+.bootstrap-table-wrapper .table-bordered td {
+  border: 1px solid #dee2e6;
+}

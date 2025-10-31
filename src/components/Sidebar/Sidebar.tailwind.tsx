@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import Logo from '../images/logo/logo.svg';
-import SidebarLinkGroup from './SidebarLinkGroup';
+import Logo from "../../images/logo/logo.svg";
+import SidebarLinkGroup from '../SidebarLinkGroup';
 
-import { useSelector } from 'react-redux';
-import { RootState } from '../../src/store/store';
+import { useSelector } from "react-redux";
+import { RootState } from '../../store/store';
 
 interface SidebarProps {
   sidebarOpen: boolean;

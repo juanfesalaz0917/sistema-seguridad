@@ -8,6 +8,7 @@ import SignUp from './pages/Authentication/SignUp';
 import Loader from './common/Loader';
 import routes from './routes';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import './styles/bootstrap-custom.css';
 
 const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
 
