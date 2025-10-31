@@ -8,6 +8,7 @@ const ViewUser = lazy(() => import('../pages/Users/View'));
 const ViewAddress = lazy(() => import('../pages/Address/View'));
 const CreateAddress = lazy(() => import('../pages/Address/Create'));
 const UpdateAddress = lazy(() => import('../pages/Address/Update'));
+const CreateRole = lazy(() => import('../pages/Roles/Create'));
 const Chart = lazy(() => import('../pages/Chart'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const FormLayout = lazy(() => import('../pages/Form/FormLayout'));
@@ -65,6 +66,11 @@ const coreRoutes = [
         path: '/roles/list',
         title: 'Roles List',
         component: RolesList,
+    },
+    {
+        path: '/role/create',
+        title: 'Create Role',
+        component: CreateRole,
     },
     {
         path: '/calendar',
