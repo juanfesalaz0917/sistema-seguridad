@@ -1,6 +1,11 @@
 // Importa las funciones necesarias del SDK
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  OAuthProvider,
+} from "firebase/auth";
 
 // Configuración de Firebase (la que te daba la app desde la consola)
 const firebaseConfig = {
@@ -12,8 +17,19 @@ const firebaseConfig = {
   appId: "1:801883072689:web:faf4aa577125c9a8989a90"
 };
 
-// Inicializa Firebase
-const app = initializeApp(firebaseConfig);
+// Evitar inicializaciones múltiples
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Exporta la autenticación
+// Inicializar Auth
 export const auth = getAuth(app);
+
+// Exportar proveedores (para usarlos donde quieras)
+export const googleProvider = new GoogleAuthProvider();
+export const githubProvider = new GithubAuthProvider();
+export const microsoftProvider = new OAuthProvider("microsoft.com");
+
+// Parámetros opcionales
+googleProvider.setCustomParameters({ prompt: "select_account" });
+microsoftProvider.setCustomParameters({ prompt: "select_account" });
+
+export default app;

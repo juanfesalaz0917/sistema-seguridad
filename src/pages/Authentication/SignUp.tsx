@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
-import MicrosoftLoginTest from '../../components/SocialLoginButtons';
+import SocialLoginButtons from '../../components/SocialLoginButtons';
 
 const SignUp = () => {
   return (
@@ -296,7 +296,7 @@ const SignUp = () => {
                   />
                 </div>
 
-                <MicrosoftLoginTest />
+                <SocialLoginButtons />
 
                 <div className="mt-6 text-center">
                   <p>
