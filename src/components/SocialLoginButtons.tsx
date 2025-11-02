@@ -42,19 +42,19 @@ const SocialLoginButtons = () => {
   return (
     <div className="flex flex-col gap-4">
       {/* Google */}
-      <button onClick={() => handleLogin("google")} className="flex items-center gap-2 border p-3 rounded-lg">
+      <button type="button" onClick={() => handleLogin("google")} className="flex items-center gap-2 border p-3 rounded-lg">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
         Continuar con Google
       </button>
 
       {/* Microsoft */}
-      <button onClick={() => handleLogin("microsoft")} className="flex items-center gap-2 border p-3 rounded-lg">
+      <button type="button" onClick={() => handleLogin("microsoft")} className="flex items-center gap-2 border p-3 rounded-lg">
         <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" alt="Microsoft" className="w-5 h-5" />
         Continuar con Microsoft
       </button>
 
       {/* GitHub */}
-      <button onClick={() => handleLogin("github")} className="flex items-center gap-2 border p-3 rounded-lg">
+      <button type="button" onClick={() => handleLogin("github")} className="flex items-center gap-2 border p-3 rounded-lg">
         <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" className="w-5 h-5" />
         Continuar con GitHub
       </button>
