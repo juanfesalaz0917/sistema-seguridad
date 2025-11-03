@@ -1,6 +1,8 @@
 import { List } from 'lucide-react';
 import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
+import UpdateDigitalSignature from '../pages/DigitalSignature/updateDigitalSignature';
+import ViewDigitalSignature from '../pages/DigitalSignature/ViewDigitalSignature';
 
 const Calendar = lazy(() => import('../pages/Calendar'));
 const CreateUser = lazy(() => import('../pages/Users/Create'));
@@ -21,6 +23,16 @@ const ListUsers = lazy(() => import('../pages/Users/ListUsers'));
 const RolesList = lazy(() => import('../pages/Roles/RolesList'));
 
 const coreRoutes = [
+    {
+        path: '/user/digital-signature/:userId',
+        component: ViewDigitalSignature,
+        title: 'Firma Digital',
+    },
+    {
+        path: '/user/digital-signature/update/:userId',
+        component: UpdateDigitalSignature,
+        title: 'Actualizar Firma Digital',
+    },
     {
         path: '/demo',
         title: 'Demo',
