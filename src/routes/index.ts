@@ -1,6 +1,7 @@
 import { List } from 'lucide-react';
 import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
+import { Update } from '@mui/icons-material';
 
 const Calendar = lazy(() => import('../pages/Calendar'));
 const CreateUser = lazy(() => import('../pages/Users/Create'));
@@ -11,7 +12,6 @@ const UpdateAddress = lazy(() => import('../pages/Address/Update'));
 const Chart = lazy(() => import('../pages/Chart'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const FormLayout = lazy(() => import('../pages/Form/FormLayout'));
-const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
 const Tables = lazy(() => import('../pages/Tables'));
 const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
@@ -19,8 +19,14 @@ const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 const Demo = lazy(() => import('../pages/Demo'));
 const ListUsers = lazy(() => import('../pages/Users/ListUsers'));
 const RolesList = lazy(() => import('../pages/Roles/RolesList'));
+const ListPermission = lazy(() => import('../pages/Permission/ListPermission'));
+const CreatePermission = lazy(() => import('../pages/Permission/CreatePermission'));
+const UpdatePermission = lazy(() => import('../pages/Permission/UpdatePermission'));
+const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
+const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
 
 const coreRoutes = [
+
     {
         path: '/demo',
         title: 'Demo',
@@ -72,11 +78,6 @@ const coreRoutes = [
         component: Calendar,
     },
     {
-        path: '/profile',
-        title: 'Profile',
-        component: Profile,
-    },
-    {
         path: '/forms/form-elements',
         title: 'Forms Elements',
         component: FormElements,
@@ -111,6 +112,33 @@ const coreRoutes = [
         title: 'Buttons',
         component: Buttons,
     },
+    {
+        path: '/permissions/list',
+        title: 'List Permission',
+        component: ListPermission,
+    },
+    {
+        path: '/permissions/create',
+        title: 'Create Permission',
+        component: CreatePermission,
+    },
+     {
+        path: '/permissions/view/:id',
+        title: 'View Permission',
+        component: ViewPermission,
+    },
+     {
+        path: '/permissions/update/:id',
+        title: 'Update Permission',
+        component: UpdatePermission,
+    },
+
+    {
+        path: '/profile',
+        title: 'View Profile',
+        component: ViewProfile,
+    },
+    
 ];
 
 const routes = [...coreRoutes];

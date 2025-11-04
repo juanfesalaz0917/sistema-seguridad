@@ -4,6 +4,7 @@ import { auth } from "../firebaseConfig";
 import { store } from "../store/store";
 import { setUser } from "../store/userSlice";
 import { User } from "../models/User";
+import axios from "axios";
 
 class SecurityService extends EventTarget {
   keySession: string;
@@ -44,6 +45,26 @@ class SecurityService extends EventTarget {
     this.dispatchEvent(new CustomEvent("userChange", { detail: user }));
     return user;
   }
+
+  async login(user: User) { //estara en la interfaz donde se pide usuario y contraseña
+        console.log("llamando api " + `${this.API_URL}/login`);
+        try {
+            const response = await axios.post(`${this.API_URL}/login`, user, { // llamar al backend con petición login 
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = response.data; //usuario y token 
+            //localStorage.setItem("user", JSON.stringify(data));
+            store.dispatch(setUser(data["user"])); //guardar en base de datos el usuario contenido en el LocalStorage
+            localStorage.setItem(this.keySession, data["token"]); //guarda token en localStorage
+            return data;
+        } catch (error) {
+            console.error('Error during login:', error);
+            throw error;
+        }
+    }
 
   logout() {
     this.user = {};

@@ -372,7 +372,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               </li>
                               <li>
                                 <NavLink
-                                  to="/permission/list"
+                                  to="/permissions/list"
                                   className={({
                                     isActive,
                                   }) =>
