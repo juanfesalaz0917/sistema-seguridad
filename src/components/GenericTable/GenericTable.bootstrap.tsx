@@ -48,14 +48,14 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
   const getButtonClass = (action: Action): string => {
     // Mapeo de acciones específicas a variantes Bootstrap
     const actionVariants: Record<string, string> = {
-      delete: "btn-outline-danger",
-      edit: "btn-outline-warning",
-      update: "btn-outline-warning",
-      view: "btn-outline-info",
+      delete: "btn-danger",
+      edit: "btn-warning",
+      update: "btn-warning",
+      view: "btn-info",
       create: "btn-outline-success",
     };
 
-    return actionVariants[action.name.toLowerCase()] || "btn-outline-primary";
+    return actionVariants[action.name.toLowerCase()] || "btn-primary";
   };
 
   return (
