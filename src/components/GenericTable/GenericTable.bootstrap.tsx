@@ -1,4 +1,3 @@
-// src/components/GenericTable/GenericTable.bootstrap.tsx
 import React from "react";
 import type { Action } from "./types";
 
@@ -6,8 +5,9 @@ interface GenericTableProps {
   data: Record<string, any>[];
   columns: string[];
   columnLabels?: Record<string, string>;
-  actions: Action[];
-  onAction: (name: string, item: Record<string, any>) => void;
+  actions?: Action[];
+  onAction?: (name: string, item: Record<string, any>) => void;
+  renderCell?: (item: Record<string, any>, column: string) => React.ReactNode; // ✅ agregado
   compact?: boolean;
   striped?: boolean;
   bordered?: boolean;
@@ -20,8 +20,9 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
   data,
   columns,
   columnLabels = {},
-  actions,
+  actions = [],
   onAction,
+  renderCell, // ✅ agregado
   compact = true,
   striped = false,
   bordered = false,
@@ -30,7 +31,6 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
   emptyMessage = "No hay registros disponibles",
 }) => {
   
-  // Función para formatear valores de celdas
   const formatCellValue = (value: any): string => {
     if (value === null || value === undefined) return "-";
     if (typeof value === "boolean") return value ? "Sí" : "No";
@@ -39,14 +39,11 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
     return String(value);
   };
 
-  // Obtener la etiqueta de la columna
   const getColumnLabel = (col: string): string => {
     return columnLabels[col] || String(col).replace(/_/g, " ").toUpperCase();
   };
 
-  // Determinar la variante del botón (usando Bootstrap classes)
   const getButtonClass = (action: Action): string => {
-    // Mapeo de acciones específicas a variantes Bootstrap
     const actionVariants: Record<string, string> = {
       delete: "btn-danger",
       edit: "btn-warning",
@@ -54,7 +51,6 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
       view: "btn-info",
       create: "btn-outline-success",
     };
-
     return actionVariants[action.name.toLowerCase()] || "btn-primary";
   };
 
@@ -62,15 +58,7 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
     <div className="bootstrap-table-wrapper">
       <div className="table-responsive">
         <table 
-          className={`
-            table 
-            ${compact ? "table-sm" : ""} 
-            ${striped ? "table-striped" : ""} 
-            ${bordered ? "table-bordered" : ""} 
-            ${hover ? "table-hover" : ""} 
-            align-middle 
-            mb-0
-          `.trim().replace(/\s+/g, ' ')}
+          className={`table ${compact ? "table-sm" : ""} ${striped ? "table-striped" : ""} ${bordered ? "table-bordered" : ""} ${hover ? "table-hover" : ""} align-middle mb-0`.trim().replace(/\s+/g, ' ')}
         >
           <thead className="table-light">
             <tr>
@@ -89,10 +77,7 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
           <tbody>
             {loading ? (
               <tr>
-                <td
-                  colSpan={columns.length + (actions.length ? 1 : 0)}
-                  className="text-center py-5"
-                >
+                <td colSpan={columns.length + (actions.length ? 1 : 0)} className="text-center py-5">
                   <div className="spinner-border text-primary" role="status">
                     <span className="visually-hidden">Cargando...</span>
                   </div>
@@ -100,10 +85,7 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td
-                  colSpan={columns.length + (actions.length ? 1 : 0)}
-                  className="text-center py-5 text-muted"
-                >
+                <td colSpan={columns.length + (actions.length ? 1 : 0)} className="text-center py-5 text-muted">
                   <i className="bi bi-inbox fs-1 d-block mb-2"></i>
                   {emptyMessage}
                 </td>
@@ -113,7 +95,7 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
                 <tr key={item.id ?? idx}>
                   {columns.map((col) => (
                     <td key={col} className="text-truncate" style={{ maxWidth: "250px" }}>
-                      {formatCellValue(item[col])}
+                      {renderCell ? renderCell(item, col) : formatCellValue(item[col])} {/* ✅ usar renderCell si existe */}
                     </td>
                   ))}
 
@@ -125,7 +107,7 @@ const GenericTableBootstrap: React.FC<GenericTableProps> = ({
                             key={action.name}
                             type="button"
                             className={`btn ${getButtonClass(action)}`}
-                            onClick={() => onAction(action.name, item)}
+                            onClick={() => onAction?.(action.name, item)} // ✅ seguro si onAction es undefined
                             title={action.label}
                           >
                             {action.label}

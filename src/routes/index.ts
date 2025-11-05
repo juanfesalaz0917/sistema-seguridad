@@ -15,7 +15,6 @@ const UpdateAddress = lazy(() => import('../pages/Address/Update'));
 const Chart = lazy(() => import('../pages/Chart'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const FormLayout = lazy(() => import('../pages/Form/FormLayout'));
-const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
 const Tables = lazy(() => import('../pages/Tables'));
 const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
@@ -23,8 +22,16 @@ const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 const Demo = lazy(() => import('../pages/Demo'));
 const ListUsers = lazy(() => import('../pages/Users/ListUsers'));
 const RolesList = lazy(() => import('../pages/Roles/RolesList'));
+const ListPermission = lazy(() => import('../pages/Permission/ListPermission'));
+const CreatePermission = lazy(() => import('../pages/Permission/CreatePermission'));
+const UpdatePermission = lazy(() => import('../pages/Permission/UpdatePermission'));
+const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
+const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
+const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
+import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
 
 const coreRoutes = [
+
     {
         path: '/user/devices/:userId',
         component: DevicesListBootstrap,
@@ -91,11 +98,6 @@ const coreRoutes = [
         component: Calendar,
     },
     {
-        path: '/profile',
-        title: 'Profile',
-        component: Profile,
-    },
-    {
         path: '/forms/form-elements',
         title: 'Forms Elements',
         component: FormElements,
@@ -130,6 +132,42 @@ const coreRoutes = [
         title: 'Buttons',
         component: Buttons,
     },
+    {
+        path: '/permissions/list',
+        title: 'List Permission',
+        component: ListPermission,
+    },
+    {
+        path: '/permissions/create',
+        title: 'Create Permission',
+        component: CreatePermission,
+    },
+    {
+        path: '/permissions/view/:id',
+        title: 'View Permission',
+        component: ViewPermission,
+    },
+    {
+        path: '/permissions/update/:id',
+        title: 'Update Permission',
+        component: UpdatePermission,
+    },
+
+    {
+        path: '/profiles/:id',
+        title: 'View Profile',
+        component: ViewProfile,
+    },
+    {
+        path: '/profiles/update/:id',
+        title: 'Update Profile',
+        component: UpdateProfile,
+    },
+    {
+        path: '/permissions/grouped/role/:roleId',
+        title: 'Assign Permissions',
+        component: ListRolesPermission, // Asegúrate de que esté importado correctamente
+    }
 ];
 
 const routes = [...coreRoutes];

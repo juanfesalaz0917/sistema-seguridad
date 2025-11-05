@@ -1,26 +1,42 @@
-// src/store/userSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../models/User";
-//Definir la composición de la variable reactiva
+
+// Definir la composición de la variable reactiva
 interface UserState {
     user: User | null;
 }
 
+// Inicializa el estado desde localStorage si existe
 const storedUser = localStorage.getItem("user");
 const initialState: UserState = {
-    user: storedUser ? JSON.parse(storedUser) : null, //evaluar si hay un usuario almacenado en localStorage, si lo hay lo devuelve como objeto, si no hay devuelve null
+    user: storedUser ? JSON.parse(storedUser) : null,
 };
 
 const userSlice = createSlice({
-    name: "user", // esto es cuando se apaga el computador y vuelve a prender, mantiene la sesion
+    name: "user",
     initialState,
     reducers: {
         setUser: (state, action: PayloadAction<User | null>) => {
             state.user = action.payload;
+
             if (action.payload) {
-                localStorage.setItem("user", JSON.stringify(action.payload)); // Almacenar el usuario en localStorage o si no esta en la plataforma
+                const userToStore = {
+                    id: action.payload.id ?? 0,
+                    name: action.payload.name,
+                    email: action.payload.email,
+                    token: action.payload.token,
+                    photo_url: action.payload.photo_url,
+                };
+
+                localStorage.setItem("user", JSON.stringify(userToStore));
+                
+                // ⚠️ AGREGAR ESTA LÍNEA:
+                if (action.payload.token) {
+                    localStorage.setItem("token", action.payload.token);
+                }
             } else {
-                localStorage.removeItem("user");// Eliminar el usuario de localStorage si es null o si cierra sesión
+                localStorage.removeItem("user");
+                localStorage.removeItem("token"); // ⚠️ AGREGAR ESTA LÍNEA
             }
         },
     },
