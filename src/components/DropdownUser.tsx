@@ -7,9 +7,11 @@ import { RootState } from '../store/store';
 import UserOne from '../images/user/user-01.png';
 
 import securityService from '../services/securityService';
+import { profileService } from '../services/profileService';
 
 const DropdownUser = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [photoUrl, setPhotoUrl] = useState<string>(UserOne);
 
     const user = useSelector((state: RootState) => state.user.user);
 
@@ -31,6 +33,41 @@ const DropdownUser = () => {
         document.addEventListener('click', clickHandler);
         return () => document.removeEventListener('click', clickHandler);
     });
+    useEffect(() => {
+
+    const loadPhoto = async () => {
+      if (!user?.id) {
+        // Si no hay usuario, usa la del securityService o por defecto
+        setPhotoUrl(
+          (securityService as any).user?.photo_url || UserOne
+        );
+        return;
+      }
+
+      try {
+        const profile = await profileService.getById(user.id);
+        if (profile?.photo) {
+          const apiUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+          const photoPath = profile.photo.startsWith("/")
+            ? profile.photo
+            : `/${profile.photo}`;
+          const fullUrl = `${apiUrl}${photoPath}`;
+          setPhotoUrl(fullUrl);
+        } else {
+          setPhotoUrl(
+            (securityService as any).user?.photo_url || UserOne
+          );
+        }
+      } catch (error) {
+        console.warn("Error cargando foto del perfil:", error);
+        setPhotoUrl(
+          (securityService as any).user?.photo_url || UserOne
+        );
+      }
+    };
+
+    loadPhoto();
+  }, [user]);
 
     // close if the esc key is pressed
     useEffect(() => {
@@ -63,11 +100,18 @@ const DropdownUser = () => {
 
                 <span className="h-12 w-12 rounded-full">
                     <img
-                        src={securityService.user.photo_url || UserOne}
+                        src={photoUrl}
                         alt="User"
+                        className="h-full w-full rounded-full object-cover"
+                        onError={(e) => {
+                            console.error(
+                                'Error cargando imagen (Dropdown):',
+                                (e.target as HTMLImageElement).src,
+                            );
+                            (e.target as HTMLImageElement).src = UserOne;
+                        }}
                     />
                 </span>
-
                 <svg
                     className={`hidden fill-current sm:block ${
                         dropdownOpen ? 'rotate-180' : ''
@@ -99,7 +143,7 @@ const DropdownUser = () => {
                 <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
                     <li>
                         <Link
-                            to="/profile"
+                            to={`/profiles/${user?.id}`}
                             className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
                         >
                             <svg

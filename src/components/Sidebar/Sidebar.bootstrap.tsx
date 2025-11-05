@@ -1,6 +1,7 @@
 // src/components/Sidebar/Sidebar.bootstrap.tsx
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useRef } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import Logo from "../../images/logo/logo.svg";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -8,78 +9,185 @@ interface SidebarProps {
 }
 
 const SidebarBootstrap: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
-  const cls = `sidebar-bootstrap ${sidebarOpen ? "open" : "closed"}`;
+  const location = useLocation();
+  const { pathname } = location;
+  const sidebar = useRef<HTMLElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+
+  // Cerrar al hacer clic fuera
+  useEffect(() => {
+    const clickHandler = ({ target }: MouseEvent) => {
+      if (!sidebar.current || !trigger.current) return;
+      if (
+        !sidebarOpen ||
+        sidebar.current.contains(target as Node) ||
+        trigger.current.contains(target as Node)
+      )
+        return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener('click', clickHandler);
+    return () => document.removeEventListener('click', clickHandler);
+  });
+
+  // Cerrar con tecla ESC
+  useEffect(() => {
+    const keyHandler = ({ keyCode }: KeyboardEvent) => {
+      if (!sidebarOpen || keyCode !== 27) return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener('keydown', keyHandler);
+    return () => document.removeEventListener('keydown', keyHandler);
+  });
 
   return (
-    <aside className={cls} aria-hidden={!sidebarOpen} role="navigation" >
-      <div className="d-flex align-items-center justify-content-between p-3 border-bottom" style={{background:'transparent'}}>
-        <div className="d-flex align-items-center gap-2">
-          <div style={{ width: 36, height: 36, borderRadius: 8, background: '#091430ff' }} />
-          <h4 className="m-0" style={{color:'#E6EEFA', fontWeight:700}}>TailAdmin</h4>
+    <>
+      {/* Overlay para mobile */}
+      <div 
+        className={`sidebar-overlay ${sidebarOpen ? "show" : ""}`}
+        onClick={() => setSidebarOpen(false)}
+      />
+
+      {/* Sidebar */}
+      <aside
+        ref={sidebar}
+        className={`sidebar-bootstrap ${sidebarOpen ? "" : "closed"}`}
+        aria-hidden={!sidebarOpen}
+        role="navigation"
+      >
+        {/* Header del Sidebar */}
+        <div className="d-flex align-items-center justify-content-between p-3 px-4 border-bottom border-secondary">
+          <NavLink to="/" className="text-decoration-none">
+            <img src={Logo} alt="Logo" style={{ height: 40 }} />
+          </NavLink>
+
+          <button
+            ref={trigger}
+            onClick={() => setSidebarOpen(false)}
+            className="btn btn-link text-light d-lg-none p-0"
+            aria-label="Cerrar menú"
+            style={{ fontSize: '1.5rem', textDecoration: 'none' }}
+          >
+            <svg
+              width="20"
+              height="18"
+              viewBox="0 0 20 18"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ fill: 'currentColor' }}
+            >
+              <path
+                d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z"
+                fill=""
+              />
+            </svg>
+          </button>
         </div>
-        <button
-          className="btn btn-sm btn-outline-light d-lg-none"
-          onClick={() => setSidebarOpen(false)}
-          aria-label="Cerrar menú"
-        >
-          ✕
-        </button>
-      </div>
 
-      <nav className="p-3">
-        <h6 className="text-uppercase small mb-3" style={{color:'#9fb4d9'}}>Gestión</h6>
-        <ul className="nav flex-column gap-2">
-          <li className="nav-item">
-            <NavLink
-              to="/users"
-              className={({ isActive }) =>
-                "nav-link px-3 py-2 rounded d-flex align-items-center" +
-                (isActive ? " active-bootstrap" : "")
-              }
-              style={{ color: '#cfe7ff' }}
-            >
-              {/* icon placeholder */}
-              <span style={{width:20, marginRight:12, display:'inline-block', textAlign:'center'}}>👥</span>
-              Users
-            </NavLink>
-          </li>
+        {/* Navegación */}
+        <nav className="p-3 px-4 flex-fill" style={{ overflowY: 'auto' }}>
+          <h6 
+            className="text-uppercase small mb-3 mt-4 fw-semibold" 
+            style={{ color: '#8A99AF', letterSpacing: '0.5px', fontSize: '0.75rem' }}
+          >
+            MENU
+          </h6>
 
-          <li className="nav-item">
-            <NavLink
-              to="/roles"
-              className={({ isActive }) =>
-                "nav-link px-3 py-2 rounded d-flex align-items-center" +
-                (isActive ? " active-bootstrap" : "")
-              }
-              style={{ color: '#cfe7ff' }}
-            >
-              <span style={{width:20, marginRight:12, display:'inline-block', textAlign:'center'}}>🔑</span>
-              Roles
-            </NavLink>
-          </li>
+          <ul className="nav flex-column gap-1">
+            {/* Users */}
+            <li className="nav-item">
+              <NavLink
+                to="/user/list"
+                className={({ isActive }) =>
+                  "nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" +
+                  (isActive ? " active-bootstrap" : " text-bodydark1")
+                }
+                onClick={() => window.innerWidth < 992 && setSidebarOpen(false)}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ fill: 'currentColor', flexShrink: 0 }}
+                >
+                  <path
+                    d="M9.0002 7.79065C11.0814 7.79065 12.7689 6.1594 12.7689 4.1344C12.7689 2.1094 11.0814 0.478149 9.0002 0.478149C6.91895 0.478149 5.23145 2.1094 5.23145 4.1344C5.23145 6.1594 6.91895 7.79065 9.0002 7.79065ZM9.0002 1.7719C10.3783 1.7719 11.5033 2.84065 11.5033 4.16252C11.5033 5.4844 10.3783 6.55315 9.0002 6.55315C7.62207 6.55315 6.49707 5.4844 6.49707 4.16252C6.49707 2.84065 7.62207 1.7719 9.0002 1.7719Z"
+                  />
+                  <path
+                    d="M10.8283 9.05627H7.17207C4.16269 9.05627 1.71582 11.5313 1.71582 14.5406V16.875C1.71582 17.2125 1.99707 17.5219 2.3627 17.5219C2.72832 17.5219 3.00957 17.2407 3.00957 16.875V14.5406C3.00957 12.2344 4.89394 10.3219 7.22832 10.3219H10.8564C13.1627 10.3219 15.0752 12.2063 15.0752 14.5406V16.875C15.0752 17.2125 15.3564 17.5219 15.7221 17.5219C16.0877 17.5219 16.3689 17.2407 16.3689 16.875V14.5406C16.2846 11.5313 13.8377 9.05627 10.8283 9.05627Z"
+                  />
+                </svg>
+                <span>Users</span>
+              </NavLink>
+            </li>
 
-          <li className="nav-item">
-            <NavLink
-              to="/permissions"
-              className={({ isActive }) =>
-                "nav-link px-3 py-2 rounded d-flex align-items-center" +
-                (isActive ? " active-bootstrap" : "")
-              }
-              style={{ color: '#cfe7ff' }}
-            >
-              <span style={{width:20, marginRight:12, display:'inline-block', textAlign:'center'}}>🛡️</span>
-              Permissions
-            </NavLink>
-          </li>
-        </ul>
-      </nav>
+            {/* Roles */}
+            <li className="nav-item">
+              <NavLink
+                to="/roles/list"
+                className={({ isActive }) =>
+                  "nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" +
+                  (isActive ? " active-bootstrap" : " text-bodydark1")
+                }
+                onClick={() => window.innerWidth < 992 && setSidebarOpen(false)}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ fill: 'currentColor', flexShrink: 0 }}
+                >
+                  <path
+                    d="M15.7499 2.9812H14.2874V2.36245C14.2874 2.02495 14.0062 1.71558 13.6405 1.71558C13.2749 1.71558 12.9937 1.99683 12.9937 2.36245V2.9812H4.97803V2.36245C4.97803 2.02495 4.69678 1.71558 4.33115 1.71558C3.96553 1.71558 3.68428 1.99683 3.68428 2.36245V2.9812H2.2499C1.29365 2.9812 0.478027 3.7687 0.478027 4.75308V14.5406C0.478027 15.4968 1.26553 16.3125 2.2499 16.3125H15.7499C16.7062 16.3125 17.5218 15.525 17.5218 14.5406V4.72495C17.5218 3.7687 16.7062 2.9812 15.7499 2.9812ZM1.77178 8.21245H4.1624V10.9968H1.77178V8.21245ZM5.42803 8.21245H8.38115V10.9968H5.42803V8.21245ZM8.38115 12.2625V15.0187H5.42803V12.2625H8.38115ZM9.64678 12.2625H12.5999V15.0187H9.64678V12.2625ZM9.64678 10.9968V8.21245H12.5999V10.9968H9.64678ZM13.8374 8.21245H16.228V10.9968H13.8374V8.21245ZM2.2499 4.24683H3.7124V4.83745C3.7124 5.17495 3.99365 5.48433 4.35928 5.48433C4.7249 5.48433 5.00615 5.20308 5.00615 4.83745V4.24683H13.0499V4.83745C13.0499 5.17495 13.3312 5.48433 13.6968 5.48433C14.0624 5.48433 14.3437 5.20308 14.3437 4.83745V4.24683H15.7499C16.0312 4.24683 16.2562 4.47183 16.2562 4.75308V6.94683H1.77178V4.75308C1.77178 4.47183 1.96865 4.24683 2.2499 4.24683ZM1.77178 14.5125V12.2343H4.1624V14.9906H2.2499C1.96865 15.0187 1.77178 14.7937 1.77178 14.5125ZM15.7499 15.0187H13.8374V12.2625H16.228V14.5406C16.2562 14.7937 16.0312 15.0187 15.7499 15.0187Z"
+                  />
+                </svg>
+                <span>Roles</span>
+              </NavLink>
+            </li>
 
-      <div style={{flex:1}} />
+            {/* Permissions */}
+            <li className="nav-item">
+              <NavLink
+                to="/permission/list"
+                className={({ isActive }) =>
+                  "nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" +
+                  (isActive ? " active-bootstrap" : " text-bodydark1")
+                }
+                onClick={() => window.innerWidth < 992 && setSidebarOpen(false)}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ fill: 'currentColor', flexShrink: 0 }}
+                >
+                  <path
+                    d="M10.8563 0.55835C10.5188 0.55835 10.2095 0.8396 10.2095 1.20522V6.83022C10.2095 7.16773 10.4907 7.4771 10.8563 7.4771H16.8751C17.0438 7.4771 17.2126 7.39272 17.3251 7.28022C17.4376 7.1396 17.4938 6.97085 17.4938 6.8021C17.2688 3.28647 14.3438 0.55835 10.8563 0.55835ZM11.4751 6.15522V1.8521C13.8095 2.13335 15.6938 3.8771 16.1438 6.18335H11.4751V6.15522Z"
+                  />
+                  <path
+                    d="M15.3845 8.7427H9.1126V2.69582C9.1126 2.35832 8.83135 2.07707 8.49385 2.07707C8.40947 2.07707 8.3251 2.07707 8.24072 2.07707C3.96572 2.04895 0.506348 5.53645 0.506348 9.81145C0.506348 14.0864 3.99385 17.5739 8.26885 17.5739C12.5438 17.5739 16.0313 14.0864 16.0313 9.81145C16.0313 9.6427 16.0313 9.47395 16.0032 9.33332C16.0032 8.99582 15.722 8.7427 15.3845 8.7427ZM8.26885 16.3083C4.66885 16.3083 1.77197 13.4114 1.77197 9.81145C1.77197 6.3802 4.47197 3.53957 7.8751 3.3427V9.36145C7.8751 9.69895 8.15635 10.0083 8.52197 10.0083H14.7938C14.6813 13.4958 11.7845 16.3083 8.26885 16.3083Z"
+                  />
+                </svg>
+                <span>Permissions</span>
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
 
-      <div className="p-3 border-top">
-        <small style={{color:'#9fb4d9'}}>© {new Date().getFullYear()} TailAdmin</small>
-      </div>
-    </aside>
+        {/* Footer */}
+        <div className="p-3 px-4 border-top border-secondary mt-auto">
+          <small style={{ color: '#8A99AF', fontSize: '0.75rem' }}>
+            © {new Date().getFullYear()} TailAdmin
+          </small>
+        </div>
+      </aside>
+    </>
   );
 };
 

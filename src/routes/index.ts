@@ -1,7 +1,8 @@
 import { List } from 'lucide-react';
 import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
-
+import UpdateDigitalSignature from '../pages/DigitalSignature/updateDigitalSignature';
+import ViewDigitalSignature from '../pages/DigitalSignature/ViewDigitalSignature';
 const Calendar = lazy(() => import('../pages/Calendar'));
 const CreateUser = lazy(() => import('../pages/Users/Create'));
 const ViewUser = lazy(() => import('../pages/Users/View'));
@@ -12,7 +13,6 @@ const CreateRole = lazy(() => import('../pages/Roles/Create'));
 const Chart = lazy(() => import('../pages/Chart'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const FormLayout = lazy(() => import('../pages/Form/FormLayout'));
-const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
 const Tables = lazy(() => import('../pages/Tables'));
 const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
@@ -20,8 +20,26 @@ const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 const Demo = lazy(() => import('../pages/Demo'));
 const ListUsers = lazy(() => import('../pages/Users/ListUsers'));
 const RolesList = lazy(() => import('../pages/Roles/RolesList'));
+const ListPermission = lazy(() => import('../pages/Permission/ListPermission'));
+const CreatePermission = lazy(() => import('../pages/Permission/CreatePermission'));
+const UpdatePermission = lazy(() => import('../pages/Permission/UpdatePermission'));
+const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
+const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
+const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
+import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
 
 const coreRoutes = [
+
+    {
+        path: '/user/digital-signature/:userId',
+        component: ViewDigitalSignature,
+        title: 'Firma Digital',
+    },
+    {
+        path: '/user/digital-signature/update/:userId',
+        component: UpdateDigitalSignature,
+        title: 'Actualizar Firma Digital',
+    },
     {
         path: '/demo',
         title: 'Demo',
@@ -78,11 +96,6 @@ const coreRoutes = [
         component: Calendar,
     },
     {
-        path: '/profile',
-        title: 'Profile',
-        component: Profile,
-    },
-    {
         path: '/forms/form-elements',
         title: 'Forms Elements',
         component: FormElements,
@@ -117,6 +130,42 @@ const coreRoutes = [
         title: 'Buttons',
         component: Buttons,
     },
+    {
+        path: '/permissions/list',
+        title: 'List Permission',
+        component: ListPermission,
+    },
+    {
+        path: '/permissions/create',
+        title: 'Create Permission',
+        component: CreatePermission,
+    },
+    {
+        path: '/permissions/view/:id',
+        title: 'View Permission',
+        component: ViewPermission,
+    },
+    {
+        path: '/permissions/update/:id',
+        title: 'Update Permission',
+        component: UpdatePermission,
+    },
+
+    {
+        path: '/profiles/:id',
+        title: 'View Profile',
+        component: ViewProfile,
+    },
+    {
+        path: '/profiles/update/:id',
+        title: 'Update Profile',
+        component: UpdateProfile,
+    },
+    {
+        path: '/permissions/grouped/role/:roleId',
+        title: 'Assign Permissions',
+        component: ListRolesPermission, // Asegúrate de que esté importado correctamente
+    }
 ];
 
 const routes = [...coreRoutes];

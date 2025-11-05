@@ -4,17 +4,160 @@
    ESTILOS PERSONALIZADOS PARA BOOTSTRAP
    ========================================== */
 
+/* ==========================================
+   LAYOUT BOOTSTRAP
+   ========================================== */
+
+.layout-bootstrap {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Wrapper principal */
+.layout-bootstrap .d-flex.vh-100 {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Content Area - debe estar al lado del sidebar */
+.content-area-bootstrap {
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Cuando el sidebar está abierto en desktop */
+@media (min-width: 992px) {
+  .content-area-bootstrap {
+    margin-left: 280px !important;
+    width: calc(100% - 280px) !important;
+  }
+}
+
+/* Asegurar que el contenido dentro respete los límites */
+.content-area-bootstrap main {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.content-area-bootstrap .container-fluid {
+  max-width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* ==========================================
+   SIDEBAR BOOTSTRAP
+   ========================================== */
+
+.sidebar-bootstrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background: linear-gradient(180deg, #1c2434 0%, #0f1419 100%);
+  z-index: 9999; /* Por encima del header */
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* Sidebar cerrado en mobile */
+.sidebar-bootstrap.closed {
+  transform: translateX(-100%);
+}
+
+/* Sidebar abierto en desktop */
+@media (min-width: 992px) {
+  .sidebar-bootstrap {
+    transform: translateX(0) !important;
+  }
+}
+
+/* Estilos de navegación del sidebar */
+.sidebar-bootstrap .nav-link {
+  color: #DEE4EE;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.sidebar-bootstrap .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.sidebar-bootstrap .nav-link.active-bootstrap {
+  background-color: rgba(51, 111, 219, 0.1);
+  color: #3B82F6;
+  font-weight: 600;
+}
+
+.sidebar-bootstrap .text-bodydark1 {
+  color: #DEE4EE;
+}
+
+/* Scrollbar personalizado para sidebar */
+.sidebar-bootstrap nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-bootstrap nav::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-bootstrap nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.sidebar-bootstrap nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ==========================================
+   HEADER BOOTSTRAP
+   ========================================== */
+
+.header-bootstrap {
+  position: sticky;
+  top: 0;
+  z-index: 1030; /* Menor que el sidebar (9999) */
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+/* ==========================================
+   TABLA BOOTSTRAP
+   ========================================== */
+
 /* Wrapper de la tabla */
 .bootstrap-table-wrapper {
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Mejoras para la tabla */
 .bootstrap-table-wrapper .table {
   margin-bottom: 0;
+  width: 100%;
+}
+
+.bootstrap-table-wrapper .table-responsive {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .bootstrap-table-wrapper .table thead th {
@@ -105,4 +248,62 @@
 .bootstrap-table-wrapper .table-bordered th,
 .bootstrap-table-wrapper .table-bordered td {
   border: 1px solid #dee2e6;
+}
+
+/* ==========================================
+   CARDS Y CONTENEDORES BOOTSTRAP
+   ========================================== */
+
+.content-area-bootstrap .card {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.content-area-bootstrap .card-body {
+  overflow-x: auto;
+}
+
+/* Ajustes para botones de acción en la tabla */
+.bootstrap-table-wrapper .btn-group {
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.bootstrap-table-wrapper .btn-group .btn {
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   OVERLAY PARA MOBILE
+   ========================================== */
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998; /* Justo debajo del sidebar */
+  display: none;
+}
+
+.sidebar-overlay.show {
+  display: block;
+}
+
+@media (min-width: 992px) {
+  .sidebar-overlay {
+    display: none !important;
+  }
+}
+
+/* ==========================================
+   Z-INDEX PARA HEADER TAILWIND
+   ========================================== */
+
+/* Asegurar que el header de Tailwind quede debajo del sidebar Bootstrap */
+header.sticky {
+  z-index: 999 !important; /* Menor que el sidebar bootstrap (9999) */
 }

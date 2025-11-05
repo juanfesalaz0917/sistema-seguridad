@@ -352,7 +352,7 @@ const SidebarMui: React.FC<SidebarProps> = ({
                             <ListItem disablePadding>
                                 <ListItemButton
                                     component={NavLink}
-                                    to="/permission/list"
+                                    to="/permissions/list"
                                     sx={{
                                         pl: 6,
                                         borderRadius: 1,
