@@ -1,7 +1,7 @@
 import React from "react";
 import type { ProfileProps } from "./types";
 
-const GenericProfileBootstrap: React.FC<ProfileProps> = ({ data, onEdit, onLogout }) => {
+const GenericProfileBootstrap: React.FC<ProfileProps> = ({ data, onEdit }) => {
   return (
     <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light py-5">
       <div className="row w-100 justify-content-center align-items-center">
@@ -25,11 +25,6 @@ const GenericProfileBootstrap: React.FC<ProfileProps> = ({ data, onEdit, onLogou
             {onEdit && (
               <button className="btn btn-primary btn-lg" onClick={onEdit}>
                 Editar Perfil
-              </button>
-            )}
-            {onLogout && (
-              <button className="btn btn-danger btn-lg" onClick={onLogout}>
-                Cerrar Sesión
               </button>
             )}
           </div>

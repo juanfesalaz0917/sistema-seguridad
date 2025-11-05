@@ -1,7 +1,7 @@
 import React from "react";
 import type { ProfileProps } from "./types";
 
-const GenericProfileTailwind: React.FC<ProfileProps> = ({ data, onEdit, onLogout }) => {
+const GenericProfileTailwind: React.FC<ProfileProps> = ({ data, onEdit }) => {
   return (
     <section className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-900 p-4">
       <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-500 ease-in-out p-8 relative overflow-hidden border border-white/20">
@@ -47,14 +47,6 @@ const GenericProfileTailwind: React.FC<ProfileProps> = ({ data, onEdit, onLogout
               className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-black font-medium rounded-full shadow-lg hover:shadow-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
             >
               Editar Perfil
-            </button>
-          )}
-          {onLogout && (
-            <button
-              onClick={onLogout}
-              className="px-8 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-black font-medium rounded-full shadow-lg hover:shadow-xl hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
-            >
-              Cerrar Sesión
             </button>
           )}
         </div>

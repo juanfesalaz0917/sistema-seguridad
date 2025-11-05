@@ -24,6 +24,7 @@ const CreatePermission = lazy(() => import('../pages/Permission/CreatePermission
 const UpdatePermission = lazy(() => import('../pages/Permission/UpdatePermission'));
 const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
 const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
+const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
 
 const coreRoutes = [
 
@@ -144,9 +145,14 @@ const coreRoutes = [
     },
 
     {
-        path: '/profile',
+        path: '/profiles/:id',
         title: 'View Profile',
         component: ViewProfile,
+    },
+    {
+        path: '/profiles/update/:id',
+        title: 'Update Profile',
+        component: UpdateProfile,
     },
     
 ];

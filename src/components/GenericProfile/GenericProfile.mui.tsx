@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, Typography, Avatar, Stack } from "@mui/material";
 import type { ProfileProps } from "./types";
 
-const GenericProfileMui: React.FC<ProfileProps> = ({ data, onEdit, onLogout }) => {
+const GenericProfileMui: React.FC<ProfileProps> = ({ data, onEdit }) => {
   return (
     <Box
       sx={{
@@ -51,11 +51,6 @@ const GenericProfileMui: React.FC<ProfileProps> = ({ data, onEdit, onLogout }) =
             {onEdit && (
               <Button variant="contained" color="primary" size="large" onClick={onEdit}>
                 Editar Perfil
-              </Button>
-            )}
-            {onLogout && (
-              <Button variant="contained" color="error" size="large" onClick={onLogout}>
-                Cerrar Sesión
               </Button>
             )}
           </Stack>

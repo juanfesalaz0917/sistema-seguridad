@@ -5,6 +5,8 @@ import {
     signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
+import { store } from '../store/store';
+import { setUser } from '../store/userSlice';
 
 const SocialLoginButtons = () => {
     const handleLogin = async (
@@ -12,7 +14,6 @@ const SocialLoginButtons = () => {
     ) => {
         try {
             let provider;
-
             switch (providerName) {
                 case 'google':
                     provider = new GoogleAuthProvider();
@@ -31,84 +32,149 @@ const SocialLoginButtons = () => {
                     throw new Error(`Proveedor no soportado: ${providerName}`);
             }
 
-            // 🔹 Iniciar sesión con Firebase
             const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-
+            const firebaseUser = result.user;
             const apiUrl = import.meta.env.VITE_API_URL;
 
-            // 🔹 1️⃣ Buscar usuario en la DB
-            let usersResponse = await fetch(`${apiUrl}/users?email=${user.email}`);
-            let users = await usersResponse.json();
+            if (!firebaseUser.email) {
+                throw new Error('El proveedor no proporcionó un email');
+            }
 
-            let userId: number;
+            // 🔹 Buscar usuario en DB
+            const usersResponse = await fetch(
+                `${apiUrl}/users?email=${encodeURIComponent(firebaseUser.email)}`,
+            );
+            
+            if (!usersResponse.ok) {
+                throw new Error('Error al consultar usuarios en la base de datos');
+            }
 
-            if (!users.length) {
-                // 🔹 2️⃣ Si no existe, crear usuario
+            const users = await usersResponse.json();
+
+            // 🔍 DEBUG: Ver qué devuelve el backend
+            console.log('🔍 Usuarios devueltos por el backend:', users);
+            console.log('🔍 Email buscado:', firebaseUser.email);
+            console.log('🔍 Tipo de respuesta:', Array.isArray(users) ? 'Array' : typeof users);
+
+            // 🔹 VALIDACIÓN MANUAL: Filtrar por email exacto (case-insensitive)
+            const exactUser = Array.isArray(users) 
+                ? users.find((u: any) => u.email?.toLowerCase() === firebaseUser.email?.toLowerCase())
+                : null;
+
+            console.log('🔍 Usuario exacto encontrado:', exactUser);
+
+            let userObj: any;
+            
+            if (!exactUser) {
+                // ✅ No existe → Crear usuario
+                console.log('📝 Creando nuevo usuario...');
+                
                 const createUserResponse = await fetch(`${apiUrl}/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        email: user.email,
-                        name: user.displayName || 'Usuario',
-                        phone: '', // opcional
+                        email: firebaseUser.email,
+                        name: firebaseUser.displayName || 'Usuario',
+                        phone: '',
                     }),
                 });
-
-                const createdUser = await createUserResponse.json();
-                if (!createUserResponse.ok)
-                    throw new Error(createdUser.error || 'Error al crear usuario');
-
-                userId = createdUser.id;
+                
+                if (!createUserResponse.ok) {
+                    const err = await createUserResponse.json();
+                    throw new Error(err.error || 'Error al crear usuario');
+                }
+                
+                userObj = await createUserResponse.json();
+                console.log('✅ Usuario creado exitosamente:', userObj);
             } else {
-                userId = users[0].id;
+                // ✅ Usuario encontrado → usarlo
+                userObj = exactUser;
+                console.log('✅ Usuario existente encontrado:', userObj);
             }
 
-            // 🔹 3️⃣ Revisar si el perfil existe
-            const profileCheckResponse = await fetch(`${apiUrl}/profiles/user/${userId}`);
-            const existingProfile = await profileCheckResponse.json();
+            const userId = userObj.id;
 
-            if (!existingProfile || profileCheckResponse.status === 404) {
-                // Crear perfil si no existe
+            if (!userId) {
+                throw new Error('El usuario no tiene un ID válido');
+            }
+
+            // 🔹 Revisar perfil exacto del userId
+            const profileResponse = await fetch(
+                `${apiUrl}/profiles/user/${userId}`,
+            );
+            
+            let profileData: any = null;
+            
+            if (profileResponse.ok) {
+                profileData = await profileResponse.json();
+            }
+
+            if (!profileData || profileResponse.status === 404) {
+                // ✅ Crear perfil
+                console.log('📝 Creando perfil para usuario:', userId);
+                
                 const formData = new FormData();
-                formData.append('displayName', user.displayName || 'Usuario');
-                formData.append('email', user.email || '');
+                formData.append(
+                    'displayName',
+                    firebaseUser.displayName || 'Usuario',
+                );
+                formData.append('email', firebaseUser.email);
                 formData.append('phone', '');
 
-                if (user.photoURL) {
-                    const photoResponse = await fetch(user.photoURL);
-                    const photoBlob = await photoResponse.blob();
-                    formData.append('photo', photoBlob, 'profile.jpg');
+                if (firebaseUser.photoURL) {
+                    try {
+                        const photoBlob = await (
+                            await fetch(firebaseUser.photoURL)
+                        ).blob();
+                        formData.append('photo', photoBlob, 'profile.jpg');
+                    } catch (photoError) {
+                        console.warn('⚠️ No se pudo cargar la foto de perfil:', photoError);
+                    }
                 }
 
-                const profileResponse = await fetch(`${apiUrl}/profiles/user/${userId}`, {
-                    method: 'POST',
-                    body: formData,
-                });
+                const createProfileResponse = await fetch(
+                    `${apiUrl}/profiles/user/${userId}`,
+                    {
+                        method: 'POST',
+                        body: formData,
+                    },
+                );
 
-                const profileData = await profileResponse.json();
-                if (!profileResponse.ok)
-                    throw new Error(profileData.error || 'Error al crear perfil');
+                if (!createProfileResponse.ok) {
+                    const err = await createProfileResponse.json();
+                    throw new Error(err.error || 'Error al crear perfil');
+                }
 
+                profileData = await createProfileResponse.json();
                 console.log('✅ Perfil creado:', profileData);
             } else {
-                // Solo iniciar sesión
-                console.log('✅ Perfil ya existe, iniciando sesión:', existingProfile);
+                console.log('✅ Perfil ya existe:', profileData);
             }
 
-        } catch (error: any) {
-            console.error(`❌ Error con ${providerName}:`, error);
-            alert(`Error al iniciar sesión con ${providerName}: ${error.message}`);
+            // 🔹 Guardar en store y LocalStorage
+            const finalUser = {
+                ...userObj,
+                token: await firebaseUser.getIdToken(),
+                photo_url: firebaseUser.photoURL || '',
+            };
+            
+            store.dispatch(setUser(finalUser));
+            localStorage.setItem('user', JSON.stringify(finalUser));
+
+            console.log('✅ Usuario logueado correctamente:', finalUser);
+            
+        } catch (err: any) {
+            console.error('❌ Error login social:', err);
+            alert(err.message || 'Error durante el inicio de sesión');
         }
     };
 
     return (
         <div className="flex flex-col gap-4">
-            {/* Google */}
             <button
                 type="button"
                 onClick={() => handleLogin('google')}
-                className="flex items-center gap-2 border p-3 rounded-lg"
+                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors"
             >
                 <img
                     src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -118,11 +184,10 @@ const SocialLoginButtons = () => {
                 Continuar con Google
             </button>
 
-            {/* Microsoft */}
             <button
                 type="button"
                 onClick={() => handleLogin('microsoft')}
-                className="flex items-center gap-2 border p-3 rounded-lg"
+                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors"
             >
                 <img
                     src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg"
@@ -132,11 +197,10 @@ const SocialLoginButtons = () => {
                 Continuar con Microsoft
             </button>
 
-            {/* GitHub */}
             <button
                 type="button"
                 onClick={() => handleLogin('github')}
-                className="flex items-center gap-2 border p-3 rounded-lg"
+                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors"
             >
                 <img
                     src="https://cdn-icons-png.flaticon.com/512/25/25231.png"

@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL; // 👈 lee la variable del .env
+const API_URL = import.meta.env.VITE_API_URL;
 
 export class BaseService<T extends { id?: string }> {
   protected endpoint: string;
 
   constructor(endpoint: string) {
-    this.endpoint = `${API_URL}${endpoint}`; // 👈 concatena con la base URL
+    this.endpoint = `${API_URL}${endpoint}`;
   }
 
   async getAll(): Promise<T[]> {
@@ -14,7 +14,7 @@ export class BaseService<T extends { id?: string }> {
     return res.data;
   }
 
-  async getById(id: string): Promise<T> {
+  async getById(id: number | string): Promise<T> {
     const res = await axios.get(`${this.endpoint}/${id}`);
     return res.data;
   }
@@ -24,8 +24,11 @@ export class BaseService<T extends { id?: string }> {
     return res.data;
   }
 
-  async update(id: string, item: Partial<T>): Promise<T> {
-    const res = await axios.put(`${this.endpoint}/${id}`, item);
+  // ✅ Actualizado para aceptar Partial<T> o FormData
+  async update(id: string | number, item: Partial<T> | FormData): Promise<T> {
+    const res = await axios.put(`${this.endpoint}/${id}`, item, {
+      headers: item instanceof FormData ? { "Content-Type": "multipart/form-data" } : {},
+    });
     return res.data;
   }
 
