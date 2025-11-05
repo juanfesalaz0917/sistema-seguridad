@@ -1,0 +1,64 @@
+/* src/styles/devices-bootstrap.css */
+
+/* ==========================================
+   ESTILOS PARA MÓDULO DE DISPOSITIVOS
+   ========================================== */
+
+/* Cards de dispositivos con hover effect */
+.device-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.device-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+  border-color: #0d6efd;
+}
+
+/* Iconos de dispositivos */
+.device-card .bi {
+  transition: all 0.3s ease;
+}
+
+.device-card:hover .bi {
+  transform: scale(1.1);
+}
+
+/* Badge de estado */
+.device-card .badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  font-weight: 600;
+}
+
+/* Footer del card */
+.device-card .card-footer {
+  border-top: 1px solid #e9ecef;
+  font-size: 0.8rem;
+}
+
+/* Botón de desactivar */
+.device-card .btn-outline-danger {
+  transition: all 0.3s ease;
+}
+
+.device-card .btn-outline-danger:hover {
+  transform: scale(1.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .device-card {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Estado inactivo - card con opacidad reducida */
+.device-card.inactive {
+  opacity: 0.7;
+}
+
+.device-card.inactive:hover {
+  opacity: 1;
+}

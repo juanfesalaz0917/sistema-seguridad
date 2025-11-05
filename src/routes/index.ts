@@ -3,6 +3,8 @@ import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
 import UpdateDigitalSignature from '../pages/DigitalSignature/updateDigitalSignature';
 import ViewDigitalSignature from '../pages/DigitalSignature/ViewDigitalSignature';
+import { Devices } from '@mui/icons-material';
+import DevicesListBootstrap from '../pages/Devices/DevicesList.bootstrap';
 
 const Calendar = lazy(() => import('../pages/Calendar'));
 const CreateUser = lazy(() => import('../pages/Users/Create'));
@@ -23,6 +25,11 @@ const ListUsers = lazy(() => import('../pages/Users/ListUsers'));
 const RolesList = lazy(() => import('../pages/Roles/RolesList'));
 
 const coreRoutes = [
+    {
+        path: '/user/devices/:userId',
+        component: DevicesListBootstrap,
+        title: 'Disposotivos',
+    },
     {
         path: '/user/digital-signature/:userId',
         component: ViewDigitalSignature,
