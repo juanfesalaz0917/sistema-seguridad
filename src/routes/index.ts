@@ -25,6 +25,7 @@ const UpdatePermission = lazy(() => import('../pages/Permission/UpdatePermission
 const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
 const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
 const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
+import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
 
 const coreRoutes = [
 
@@ -133,12 +134,12 @@ const coreRoutes = [
         title: 'Create Permission',
         component: CreatePermission,
     },
-     {
+    {
         path: '/permissions/view/:id',
         title: 'View Permission',
         component: ViewPermission,
     },
-     {
+    {
         path: '/permissions/update/:id',
         title: 'Update Permission',
         component: UpdatePermission,
@@ -154,7 +155,11 @@ const coreRoutes = [
         title: 'Update Profile',
         component: UpdateProfile,
     },
-    
+    {
+        path: '/permissions/grouped/role/:roleId',
+        title: 'Assign Permissions',
+        component: ListRolesPermission, // Asegúrate de que esté importado correctamente
+    }
 ];
 
 const routes = [...coreRoutes];

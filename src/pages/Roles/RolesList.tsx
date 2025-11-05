@@ -1,6 +1,7 @@
 import { Role } from "../../models/Role";
 import React, { useState } from "react";
 import GenericTable from "../../components/GenericTable";
+import { useNavigate } from "react-router-dom";
 
 const RolesList: React.FC = () => {
     const [roles, setRoles] = useState<Role[]>([
@@ -8,11 +9,13 @@ const RolesList: React.FC = () => {
         { id: 2, name: "User"},
     ]);
 
-    const handleAction = (action: string, item: Role) => {
-    if (action === "assignPermissions") {
-      console.log("Assign permissions to role:", item);
-    }
-  };
+    const navigate = useNavigate();
+
+  const handleAction = (action: string, item: Role) => {
+  if (action === "assignPermissions") {
+    navigate(`/permissions/grouped/role/${item.id}`);
+  }
+};
 
   return (
     <div>

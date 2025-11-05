@@ -2,27 +2,27 @@ import React, { Suspense } from "react";
 import { useUiLibrary } from "../../context/UiLibraryContext";
 import type { Action } from "./types";
 
-const TailwindTable = React.lazy(() => import("./GenericTable.tailwind"));
-const BootstrapTable = React.lazy(() => import("./GenericTable.bootstrap"));
-const MuiTable = React.lazy(() => import("./GenericTable.mui"));
+const TailwindTable = React.lazy(() => import("./GenericTable.tailwind")) as React.LazyExoticComponent<React.FC<GenericTableProps>>;
+const BootstrapTable = React.lazy(() => import("./GenericTable.bootstrap")) as React.LazyExoticComponent<React.FC<GenericTableProps>>;
+const MuiTable = React.lazy(() => import("./GenericTable.mui")) as React.LazyExoticComponent<React.FC<GenericTableProps>>;
 
-export interface GenericTableProps {
-  data: Record<string, any>[];
+export interface GenericTableProps<T = Record<string, any>> {
+  data: T[];
   columns: string[];
-  actions: Action[];
-  onAction: (name: string, item: Record<string, any>) => void;
+  actions?: Action[];
+  onAction?: (name: string, item: T) => void;
+  renderCell?: (item: T, column: string) => React.ReactNode;
 }
 
 const GenericTable: React.FC<GenericTableProps> = (props) => {
   const { library } = useUiLibrary();
 
-  let Component = TailwindTable;
+  let Component: React.LazyExoticComponent<React.FC<GenericTableProps>> = TailwindTable;
   if (library === "bootstrap") Component = BootstrapTable;
   if (library === "mui") Component = MuiTable;
 
   return (
     <Suspense fallback={<div>Loading table...</div>}>
-      {/* @ts-ignore */}
       <Component {...props} />
     </Suspense>
   );
