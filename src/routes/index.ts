@@ -1,4 +1,3 @@
-import { List } from 'lucide-react';
 import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
 import UpdateDigitalSignature from '../pages/DigitalSignature/updateDigitalSignature';
@@ -19,17 +18,21 @@ const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
 const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 const Demo = lazy(() => import('../pages/Demo'));
 const ListUsers = lazy(() => import('../pages/Users/ListUsers'));
-const RolesList = lazy(() => import('../pages/Roles/RolesList'));
+const RolesList = lazy(() => import('../pages/Roles/List'));
+const RoleUpdate = lazy(() => import('../pages/Roles/Update'));
 const ListPermission = lazy(() => import('../pages/Permission/ListPermission'));
-const CreatePermission = lazy(() => import('../pages/Permission/CreatePermission'));
-const UpdatePermission = lazy(() => import('../pages/Permission/UpdatePermission'));
+const CreatePermission = lazy(
+    () => import('../pages/Permission/CreatePermission'),
+);
+const UpdatePermission = lazy(
+    () => import('../pages/Permission/UpdatePermission'),
+);
 const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
 const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
 const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
-import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
+import ListRolesPermission from '../pages/RolePermission/ListRolePermission';
 
 const coreRoutes = [
-
     {
         path: '/user/digital-signature/:userId',
         component: ViewDigitalSignature,
@@ -89,6 +92,11 @@ const coreRoutes = [
         path: '/role/create',
         title: 'Create Role',
         component: CreateRole,
+    },
+    {
+        path: '/role/update/:id',
+        title: 'Update Role',
+        component: RoleUpdate,
     },
     {
         path: '/calendar',
@@ -165,7 +173,7 @@ const coreRoutes = [
         path: '/permissions/grouped/role/:roleId',
         title: 'Assign Permissions',
         component: ListRolesPermission, // Asegúrate de que esté importado correctamente
-    }
+    },
 ];
 
 const routes = [...coreRoutes];

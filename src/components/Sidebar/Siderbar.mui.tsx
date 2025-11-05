@@ -109,12 +109,15 @@ const SidebarMui: React.FC<SidebarProps> = ({
             sx={{
                 width: drawerWidth,
                 flexShrink: 0,
+                position: 'fixed',
+                zIndex: (theme) => theme.zIndex.drawer,
                 '& .MuiDrawer-paper': {
                     width: drawerWidth,
                     boxSizing: 'border-box',
                     bgcolor: '#1C2434',
                     color: '#DEE4EE',
                     borderRight: 'none',
+                    position: 'fixed',
                 },
             }}
         >
