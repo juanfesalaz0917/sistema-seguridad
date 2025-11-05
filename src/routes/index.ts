@@ -91,7 +91,7 @@ const coreRoutes = [
         component: Calendar,
     },
     {
-        path: '/profile',
+        path: 'user/profile/:userId',
         title: 'Profile',
         component: Profile,
     },

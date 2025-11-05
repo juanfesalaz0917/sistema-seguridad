@@ -17,7 +17,7 @@ const SignIn: React.FC = () => {
     try {
       const response = await SecurityService.login(user);
       console.log('Usuario autenticado:', response);
-      navigate('/');
+      navigate('/user/create');
     } catch (error) {
       console.error('Error al iniciar sesión', error);
     }
