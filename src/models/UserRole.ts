@@ -1,10 +1,12 @@
-import { User } from "./User";
-import { Role } from "./Role";
+import { User } from './User';
+import { Role } from './Role';
 
 export interface UserRole {
-  id?: string;
-  startAt?: Date;
-  endAt?: Date;
-  user?: User;
-  role?: Role;
+    id?: string;
+    user_id?: number;
+    role_id?: number;
+    startAt?: Date;
+    endAt?: Date;
+    user?: User;
+    role?: Role;
 }

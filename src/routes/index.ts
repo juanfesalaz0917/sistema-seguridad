@@ -6,6 +6,7 @@ const ViewUser = lazy(() => import('../pages/Users/View'));
 const ViewAddress = lazy(() => import('../pages/Address/View'));
 const CreateAddress = lazy(() => import('../pages/Address/Create'));
 const UpdateAddress = lazy(() => import('../pages/Address/Update'));
+const CreateRole = lazy(() => import('../pages/Roles/Create'));
 const Chart = lazy(() => import('../pages/Chart'));
 const FormElements = lazy(() => import('../pages/Form/FormElements'));
 const FormLayout = lazy(() => import('../pages/Form/FormLayout'));
@@ -15,7 +16,8 @@ const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
 const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 const Demo = lazy(() => import('../pages/Demo'));
 const ListUsers = lazy(() => import('../pages/Users/ListUsers'));
-const RolesList = lazy(() => import('../pages/Roles/RolesList'));
+const RolesList = lazy(() => import('../pages/Roles/List'));
+const RoleUpdate = lazy(() => import('../pages/Roles/Update'));
 const ListPermission = lazy(() => import('../pages/Permission/ListPermission'));
 const CreatePermission = lazy(
     () => import('../pages/Permission/CreatePermission'),
@@ -29,12 +31,16 @@ const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
 const DevicesList = lazy(() => import('../pages/Devices'));
 const DigitalSignature = lazy(() => import('../pages/DigitalSignature'));
 const SecurityQuestions = lazy(() => import('../pages/SecurityQuestion'));
-import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
+const ListPasswords = lazy(() => import('../pages/Password/List'));
+const CreatePasswords = lazy(() => import('../pages/Password/Create'));
+const UpdatePasswords = lazy(() => import('../pages/Password/Update'));
+const ListUserRole = lazy(() => import('../pages/UserRole/List'));
+const AssignUserRole = lazy(() => import('../pages/UserRole/Assign'));
+import ListRolesPermission from '../pages/RolePermission/ListRolePermission';
 import ListSessions from '../pages/Session/ListSession';
 import CreateSession from '../pages/Session/CreateSession';
 import UpdateSession from '../pages/Session/UpdateSession';
 import ViewSession from '../pages/Session/ViewSession';
-
 
 const coreRoutes = [
     {
@@ -113,9 +119,44 @@ const coreRoutes = [
         component: UpdateAddress,
     },
     {
+        path: '/user/passwords/:userId',
+        title: 'List Password',
+        component: ListPasswords,
+    },
+    {
+        path: '/user/passwords/create/:userId',
+        title: 'Create Password',
+        component: CreatePasswords,
+    },
+    {
+        path: '/user/passwords/update/:id',
+        title: 'Update Password',
+        component: UpdatePasswords,
+    },
+    {
         path: '/roles/list',
         title: 'Roles List',
         component: RolesList,
+    },
+    {
+        path: '/role/create',
+        title: 'Create Role',
+        component: CreateRole,
+    },
+    {
+        path: '/role/update/:id',
+        title: 'Update Role',
+        component: RoleUpdate,
+    },
+    {
+        path: '/user-role/:userId',
+        title: 'User Roles',
+        component: ListUserRole,
+    },
+    {
+        path: '/user-role/assign/:userId',
+        title: 'Assign Roles',
+        component: AssignUserRole,
     },
     {
         path: '/calendar',

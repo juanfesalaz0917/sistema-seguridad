@@ -1,0 +1,26 @@
+.layout-mui {
+    display: flex;
+    min-height: 100vh;
+}
+
+.layout-mui-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+.content-area-mui {
+    flex-grow: 1;
+    padding: 24px;
+    margin-left: 290px;
+    width: calc(100% - 290px);
+    min-height: 100vh;
+    background-color: #f1f5f9;
+    transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+    .content-area-mui {
+        margin-left: 0;
+        width: 100%;
+    }
+}
