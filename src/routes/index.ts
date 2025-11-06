@@ -1,4 +1,3 @@
-import { List } from 'lucide-react';
 import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
 import UpdateDigitalSignature from '../pages/DigitalSignature/updateDigitalSignature';
@@ -26,13 +25,31 @@ const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
 const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
 const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
 import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
+import ListSessions from '../pages/Session/ListSession';
+import CreateSession from '../pages/Session/CreateSession';
+import UpdateSession from '../pages/Session/UpdateSession';
+import ViewSession from '../pages/Session/ViewSession';
 
 const coreRoutes = [
-
     {
-        path: '/user/devices/:userId',
-        component: DevicesListBootstrap,
-        title: 'Disposotivos',
+        path: '/sessions/user/:id/view/:sessionId',
+        component: ViewSession,
+        title: 'Ver Sesion',
+    },
+    {
+        path: '/sessions/user/:id/update/:sessionId',
+        component: UpdateSession,
+        title: 'Actualizar Sesion',
+    },
+    {
+        path: '/sessions/user/:id/create',
+        component: CreateSession,
+        title: 'Crear Sesion',
+    },
+    {
+        path: '/sessions/user/:id',
+        component: ListSessions,
+        title: 'Listar Sesiones',
     },
     {
         path: '/user/digital-signature/:userId',

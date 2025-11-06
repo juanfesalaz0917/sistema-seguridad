@@ -43,7 +43,7 @@ const ListUsers: React.FC = () => {
                 await deleteUser(item);
                 break;
             case 'profile':
-                navigate(`/user/profile/${item.id}`);
+                navigate(`/profiles/${item.id}`);
                 break;
             case 'address':
                 navigate(`/user/address/${item.id}`);
@@ -58,7 +58,7 @@ const ListUsers: React.FC = () => {
                 navigate(`/user/passwords/${item.id}`);
                 break;
             case 'sessions':
-                navigate(`/user/sessions/${item.id}`);
+                navigate(`/sessions/user/${item.id}`);
                 break;
             default:
                 console.log(action, item);
