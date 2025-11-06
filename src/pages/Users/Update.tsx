@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import { User } from '../../models/User';
 import UserFormValidator from '../../components/UserFormValidator';
 import Breadcrumb from "../../components/Breadcrumb";
+import UserFormBootstrap from "../../components/UserForm/UserForm.bootstrap";
+import UserFormSwitcher from "../../components/UserForm";
 
 const UpdateUser: React.FC = () => {
     const { id } = useParams(); // Obtener el ID de la URL
@@ -63,7 +65,7 @@ const UpdateUser: React.FC = () => {
     return (
         <>
             <Breadcrumb pageName="Actualizar Usuario" />
-            <UserFormValidator
+            <UserFormSwitcher
                 handleUpdate={handleUpdateUser}
                 mode={2} // 2 significa actualización
                 user={user}
