@@ -1,8 +1,6 @@
 import { List } from 'lucide-react';
 import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
-import UpdateDigitalSignature from '../pages/DigitalSignature/updateDigitalSignature';
-import ViewDigitalSignature from '../pages/DigitalSignature/ViewDigitalSignature';
 const Calendar = lazy(() => import('../pages/Calendar'));
 const CreateUser = lazy(() => import('../pages/Users/Create'));
 const ViewUser = lazy(() => import('../pages/Users/View'));
@@ -20,29 +18,29 @@ const Demo = lazy(() => import('../pages/Demo'));
 const ListUsers = lazy(() => import('../pages/Users/ListUsers'));
 const RolesList = lazy(() => import('../pages/Roles/RolesList'));
 const ListPermission = lazy(() => import('../pages/Permission/ListPermission'));
-const CreatePermission = lazy(() => import('../pages/Permission/CreatePermission'));
-const UpdatePermission = lazy(() => import('../pages/Permission/UpdatePermission'));
+const CreatePermission = lazy(
+    () => import('../pages/Permission/CreatePermission'),
+);
+const UpdatePermission = lazy(
+    () => import('../pages/Permission/UpdatePermission'),
+);
 const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
 const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
 const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
-import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
+import ListRolesPermission from '../pages/RolePermission/ListRolePermission';
+import DevicesList from '../pages/Devices';
+import DigitalSignature from '../pages/DigitalSignature';
 
 const coreRoutes = [
-
     {
         path: '/user/devices/:userId',
-        component: DevicesListBootstrap,
-        title: 'Disposotivos',
+        component: DevicesList,
+        title: 'Dispositivos',
     },
     {
         path: '/user/digital-signature/:userId',
-        component: ViewDigitalSignature,
+        component: DigitalSignature,
         title: 'Firma Digital',
-    },
-    {
-        path: '/user/digital-signature/update/:userId',
-        component: UpdateDigitalSignature,
-        title: 'Actualizar Firma Digital',
     },
     {
         path: '/demo',
@@ -164,7 +162,7 @@ const coreRoutes = [
         path: '/permissions/grouped/role/:roleId',
         title: 'Assign Permissions',
         component: ListRolesPermission, // Asegúrate de que esté importado correctamente
-    }
+    },
 ];
 
 const routes = [...coreRoutes];

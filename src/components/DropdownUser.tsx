@@ -8,6 +8,7 @@ import UserOne from '../images/user/user-01.png';
 
 import securityService from '../services/securityService';
 import { profileService } from '../services/profileService';
+import { useNavigate } from 'react-router-dom';
 
 const DropdownUser = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -79,8 +80,10 @@ const DropdownUser = () => {
         return () => document.removeEventListener('keydown', keyHandler);
     });
 
+    const navigate = useNavigate();
     const handleLogout = () => {
         securityService.logout();
+        navigate('auth/signin');
     };
 
     return (

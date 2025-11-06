@@ -11,7 +11,7 @@ export interface Device {
     updated_at?: string;
 }
 
-// DTO para crear dispositivo
+// DTO para crear/actualizar dispositivo
 export interface DeviceInput {
     user_id: number;
     name: string;

@@ -43,7 +43,7 @@ const ListUsers: React.FC = () => {
                 await deleteUser(item);
                 break;
             case 'profile':
-                navigate(`/user/profile/${item.id}`);
+                navigate(`/profiles/${item.id}`);
                 break;
             case 'address':
                 navigate(`/user/address/${item.id}`);
