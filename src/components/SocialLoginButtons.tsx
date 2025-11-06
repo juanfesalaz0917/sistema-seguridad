@@ -9,9 +9,11 @@ import { auth } from '../firebaseConfig';
 import { store } from '../store/store';
 import { setUser } from '../store/userSlice';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const SocialLoginButtons = () => {
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogin = async (
         providerName: 'google' | 'microsoft' | 'github',
@@ -174,7 +176,8 @@ const SocialLoginButtons = () => {
 
             console.log('✅ Usuario logueado correctamente:', finalUser);
             toast.success('Login exitoso');
-            
+            // Redirect to dashboard after successful social login
+            navigate('/');
         } catch (err: any) {
             console.error('❌ Error login social:', err);
             toast.error(err?.message || 'Error durante el inicio de sesión');
