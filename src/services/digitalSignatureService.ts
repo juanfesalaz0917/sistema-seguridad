@@ -1,7 +1,6 @@
 // src/services/digitalSignatureService.ts
-import axios from "axios";
-import { DigitalSignature } from "../models/DigitalSignature";
 import api from "../interceptors/axiosInterceptor";
+import { DigitalSignature } from "../models/DigitalSignature";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 const SIGNATURE_ENDPOINT = "/digital-signatures";
@@ -115,12 +114,12 @@ class DigitalSignatureService {
      */
     getImageUrl(filename: string): string {
         if (!filename) return "";
-        
+
         // Si ya es una URL completa, devolverla
         if (filename.startsWith("http")) {
             return filename;
         }
-        
+
         // Construir URL del endpoint Flask
         return `${API_URL}${SIGNATURE_ENDPOINT}/${filename}`;
     }

@@ -1,6 +1,5 @@
-import axios from 'axios';
-import { Address } from '../models/Address';
 import api from '../interceptors/axiosInterceptor';
+import { Address } from '../models/Address';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/addresses`;
 
@@ -16,7 +15,7 @@ class AddressService {
 
     async getAddressById(id: number): Promise<Address | null> {
         try {
-            const response = await axios.get<Address>(`${API_URL}/${id}`);
+            const response = await api.get<Address>(`${API_URL}/${id}`);
             return response.data;
         } catch (error) {
             console.error('Dirección no encontrada:', error);
@@ -25,7 +24,7 @@ class AddressService {
     }
     async getAddressesByUserId(userId: number): Promise<Address | null> {
         try {
-            const response = await axios.get<Address>(
+            const response = await api.get<Address>(
                 `${API_URL}/user/${userId}`,
             );
             return response.data;

@@ -2,6 +2,7 @@
 import { BaseService } from "./baseService";
 import { Session } from "../models/Session";
 
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export class SessionService extends BaseService<Session> {

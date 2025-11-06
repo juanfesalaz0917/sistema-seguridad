@@ -1,6 +1,5 @@
-import axios from 'axios';
-import { UserRole } from '../models/UserRole';
 import api from '../interceptors/axiosInterceptor';
+import { UserRole } from '../models/UserRole';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/user-roles`;
 
@@ -16,7 +15,7 @@ class UserRoleService {
 
     async getUserRoleById(id: string): Promise<UserRole | null> {
         try {
-            const response = await axios.get<UserRole>(`${API_URL}/${id}`);
+            const response = await api.get<UserRole>(`${API_URL}/${id}`);
             return response.data;
         } catch (error) {
             console.error('UserRole no encontrado:', error);
@@ -25,7 +24,7 @@ class UserRoleService {
     }
     async getUserRolesByRoleId(roleId: number): Promise<UserRole[]> {
         try {
-            const response = await axios.get<UserRole[]>(
+            const response = await api.get<UserRole[]>(
                 `${API_URL}/role/${roleId}`,
             );
             return response.data;
@@ -36,7 +35,7 @@ class UserRoleService {
     }
     async getUserRolesByUserId(userId: number): Promise<UserRole[]> {
         try {
-            const response = await axios.get<UserRole[]>(
+            const response = await api.get<UserRole[]>(
                 `${API_URL}/user/${userId}`,
             );
             return response.data;

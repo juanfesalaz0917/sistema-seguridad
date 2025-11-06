@@ -1,6 +1,5 @@
-import axios from 'axios';
-import { Password } from '../models/Password';
 import api from '../interceptors/axiosInterceptor';
+import { Password } from '../models/Password';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/passwords`;
 
@@ -16,7 +15,7 @@ class PasswordService {
 
     async getPasswordById(id: number): Promise<Password | null> {
         try {
-            const response = await axios.get<Password>(`${API_URL}/${id}`);
+            const response = await api.get<Password>(`${API_URL}/${id}`);
             return response.data;
         } catch (error) {
             console.error('Error al obtener contraseña por ID:', error);
@@ -25,7 +24,7 @@ class PasswordService {
     }
     async getPasswordsByUserId(userId: number): Promise<Password[]> {
         try {
-            const response = await axios.get<Password[]>(
+            const response = await api.get<Password[]>(
                 `${API_URL}/user/${userId}`,
             );
             return response.data;
