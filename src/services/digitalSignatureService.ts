@@ -115,13 +115,32 @@ class DigitalSignatureService {
     getImageUrl(filename: string): string {
         if (!filename) return "";
 
+        // If filename is already a data URL or blob URL, return it directly
+        if (filename.startsWith("data:") || filename.startsWith("blob:")) {
+            return filename;
+        }
+
         // Si ya es una URL completa, devolverla
         if (filename.startsWith("http")) {
             return filename;
         }
 
-        // Construir URL del endpoint Flask
-        return `${API_URL}${SIGNATURE_ENDPOINT}/${filename}`;
+        // Normalize base and filename to avoid duplicated segments like
+        // http://host/api/digital-signatures/digital-signatures/xxxx
+        const base = API_URL.replace(/\/+$/, ''); // remove trailing slashes
+        const normalized = filename.replace(/^\/+/, ''); // remove leading slashes
+        const endpointNoSlash = SIGNATURE_ENDPOINT.replace(/^\/+/, '');
+
+        // If filename already contains the endpoint segment (with or without leading slash),
+        // return base + '/' + normalized so we don't duplicate the endpoint.
+        if (normalized.startsWith(endpointNoSlash) || normalized.includes(`${endpointNoSlash}/`)) {
+            return `${base}/${normalized}`;
+        }
+
+        // If filename looked like a server absolute path (starting with slash originally),
+        // normalized removed the slash above so treat it as not containing endpoint and
+        // construct by joining base + endpoint + normalized
+        return `${base}${SIGNATURE_ENDPOINT}/${normalized}`;
     }
 }
 
