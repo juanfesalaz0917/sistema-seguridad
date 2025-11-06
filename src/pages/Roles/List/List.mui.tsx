@@ -72,7 +72,7 @@ const RolesList: React.FC = () => {
             navigate(`/user-role/list/${role.id}`);
         }
         if (action === 'assignPermissions') {
-            navigate(`/role-permissions/list/${role.id}`);
+            navigate(`/permissions/grouped/role/${role.id}`);
         }
         if (action === 'update') {
             navigate(`/role/update/${role.id}`);
