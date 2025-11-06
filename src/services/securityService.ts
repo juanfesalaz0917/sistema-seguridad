@@ -1,10 +1,11 @@
 // src/services/SecurityService.ts
 import { onAuthStateChanged, signOut, type User as FirebaseUser } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+import api from "../interceptors/axiosInterceptor";
+import { User } from "../models/User";
 import { store } from "../store/store";
 import { setUser } from "../store/userSlice";
-import { User } from "../models/User";
-import axios from "axios";
+
 
 class SecurityService extends EventTarget {
   keySession: string;
@@ -44,19 +45,19 @@ class SecurityService extends EventTarget {
         // Si el email coincide, usar el usuario guardado (preserva foto actualizada)
         if (parsedUser.email === email) {
           console.log("✅ Usuario cargado desde localStorage (foto preservada)");
-          
+
           // Solo actualizar el token (puede haber expirado)
           const newToken = await firebaseUser.getIdToken();
           const updatedUser = {
             ...parsedUser,
             token: newToken,
           };
-          
+
           this.user = updatedUser;
           localStorage.setItem("user", JSON.stringify(updatedUser));
           localStorage.setItem(this.keySession, newToken);
           store.dispatch(setUser(updatedUser));
-          
+
           return updatedUser;
         }
       }
@@ -68,7 +69,7 @@ class SecurityService extends EventTarget {
       console.log('🔍 Usuarios devueltos:', users);
 
       // Filtrar por email exacto (case-insensitive)
-      const exactUser = Array.isArray(users) 
+      const exactUser = Array.isArray(users)
         ? users.find((u: any) => u.email?.toLowerCase() === email.toLowerCase())
         : null;
 
@@ -100,13 +101,13 @@ class SecurityService extends EventTarget {
 
       // 4️⃣ Obtener foto del perfil en backend (si existe)
       let profilePhotoUrl = firebaseUser.photoURL || "";
-      
+
       try {
         const profileRes = await fetch(`${this.API_URL}/profiles/user/${userObj.id}`);
         if (profileRes.ok) {
           const profile = await profileRes.json();
           console.log('📸 Perfil del backend:', profile);
-          
+
           // El backend guarda la foto en el campo "photo"
           if (profile.photo) {
             // Construir URL completa
@@ -150,7 +151,7 @@ class SecurityService extends EventTarget {
 
   async login(user: User) {
     try {
-      const response = await axios.post(`${this.API_URL}/login`, user, {
+      const response = await api.post(`${this.API_URL}/login`, user, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -163,8 +164,11 @@ class SecurityService extends EventTarget {
 
       return data;
     } catch (error) {
+      // Mejorar mensaje de error para el frontend
       console.error("Error durante login:", error);
-      throw error;
+      const err: any = error;
+      const serverMsg = err?.response?.data?.message || err?.response?.data?.error || err?.message;
+      throw new Error(serverMsg || 'Error durante login');
     }
   }
 

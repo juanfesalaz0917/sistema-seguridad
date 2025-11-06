@@ -1,31 +1,42 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import { User } from '../../models/User';
 import SecurityService from '../../services/securityService';
 
-import Breadcrumb from '../../components/Breadcrumb';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '../../components/Breadcrumb';
 import SocialLoginButtons from '../../components/SocialLoginButtons';
 
 const SignIn: React.FC = () => {
-    const navigate = useNavigate();
-    const handleLogin = async (values: { email: string; password: string }) => {
-        try {
-            const loginUser: User = {
-                email: values.email,
-                password: values.password,
-                name: values.email.split('@')[0], // si no tienes displayName
-            };
+  const navigate = useNavigate();
 
-            const response = await SecurityService.login(loginUser);
-            console.log('Usuario autenticado:', response);
-            navigate('/');
-        } catch (error) {
-            console.error('Error al iniciar sesión', error);
-        }
-    };
+  // If already authenticated (token present), redirect to dashboard
+  useEffect(() => {
+    try {
+      if (SecurityService.isAuthenticated()) {
+        navigate('/');
+      }
+    } catch (err) {
+      // ignore
+    }
+  }, [navigate]);
+
+  type LoginForm = { email: string; password: string };
+
+  const handleLogin = async (user: LoginForm) => {
+    // este metodo integra la llamada al servicio de login, el store y la navegación
+    console.log('aqui ' + JSON.stringify(user));
+    try {
+      // SecurityService.login expects a User type; cast here for the HTTP payload
+      const response = await SecurityService.login(user as any);
+      console.log('Usuario autenticado:', response);
+      // Redirect to dashboard (root)
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error al iniciar sesión', error);
+    }
+  };
 
     return (
         <>
@@ -42,19 +53,6 @@ const SignIn: React.FC = () => {
                                 width={176}
                                 height={32}
                             />
-                            <img
-                                className="dark:hidden"
-                                src={'/images/logo/logo-dark.svg'}
-                                alt="Logo"
-                                width={176}
-                                height={32}
-                            />
-
-                            <p className="2xl:px-20">
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit suspendisse.
-                            </p>
-
                             <span className="mt-15 inline-block">
                                 <svg
                                     width="350"
@@ -190,7 +188,10 @@ const SignIn: React.FC = () => {
                             </h2>
 
                             <Formik
-                                initialValues={{ email: '', password: '' }}
+                                initialValues={{
+                                    email: '',
+                                    password: '',
+                                }}
                                 validationSchema={Yup.object({
                                     email: Yup.string()
                                         .email('Email inválido')
@@ -199,7 +200,18 @@ const SignIn: React.FC = () => {
                                         'La contraseña es obligatoria',
                                     ),
                                 })}
-                                onSubmit={(values) => handleLogin(values)}
+                                onSubmit={(values) => {
+                                    const formattedValues = { ...values };
+                                    // El modelo User requiere id y name; para login solo necesitamos email y password,
+                                    // así que enviamos un objeto con campos mínimos exigidos por la interfaz.
+                                    const payload = {
+                                        id: 0,
+                                        name: '',
+                                        email: formattedValues.email,
+                                        password: formattedValues.password,
+                                    };
+                                    handleLogin(payload as any);
+                                }}
                             >
                                 {({ handleSubmit }) => (
                                     <Form

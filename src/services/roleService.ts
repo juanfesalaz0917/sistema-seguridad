@@ -1,6 +1,5 @@
-import axios from 'axios';
-import { Role } from '../models/Role';
 import api from '../interceptors/axiosInterceptor';
+import { Role } from '../models/Role';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/roles`;
 
@@ -16,7 +15,7 @@ class RoleService {
 
     async getRoleById(id: number): Promise<Role | null> {
         try {
-            const response = await axios.get<Role>(`${API_URL}/${id}`);
+            const response = await api.get<Role>(`${API_URL}/${id}`);
             return response.data;
         } catch (error) {
             console.error('Rol no encontrado:', error);

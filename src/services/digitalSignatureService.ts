@@ -1,18 +1,31 @@
 // src/services/digitalSignatureService.ts
-import axios from "axios";
-import { DigitalSignature, DigitalSignatureInput } from "../models/DigitalSignature";
 import api from "../interceptors/axiosInterceptor";
+import { DigitalSignature } from "../models/DigitalSignature";
 
-const API_URL = import.meta.env.VITE_API_URL + "/digital-signatures" || "";
+const API_URL = import.meta.env.VITE_API_URL || "";
+const SIGNATURE_ENDPOINT = "/digital-signatures";
 
 class DigitalSignatureService {
+    /**
+     * Obtener todas las firmas digitales (admin)
+     */
+    async getAllSignatures(): Promise<DigitalSignature[]> {
+        try {
+            const response = await api.get<DigitalSignature[]>(`${SIGNATURE_ENDPOINT}/`);
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener firmas digitales:", error);
+            return [];
+        }
+    }
+
     /**
      * Obtener la firma digital de un usuario específico
      * Relación 1:1 - Un usuario tiene una firma
      */
     async getSignatureByUserId(userId: number): Promise<DigitalSignature | null> {
         try {
-            const response = await api.get<DigitalSignature>(`/digital-signatures/user/${userId}`);
+            const response = await api.get<DigitalSignature>(`${SIGNATURE_ENDPOINT}/user/${userId}`);
             return response.data;
         } catch (error) {
             console.error("Error al obtener firma digital:", error);
@@ -25,7 +38,7 @@ class DigitalSignatureService {
      */
     async getSignatureById(id: number): Promise<DigitalSignature | null> {
         try {
-            const response = await axios.get<DigitalSignature>(`${API_URL}/${id}`);
+            const response = await api.get<DigitalSignature>(`${SIGNATURE_ENDPOINT}/${id}`);
             return response.data;
         } catch (error) {
             console.error("Firma digital no encontrada:", error);
@@ -35,10 +48,22 @@ class DigitalSignatureService {
 
     /**
      * Crear una nueva firma digital para un usuario
+     * Backend espera FormData con 'photo' file
      */
-    async createSignature(signature: DigitalSignatureInput): Promise<DigitalSignature | null> {
+    async createSignature(userId: number, photoFile: File): Promise<DigitalSignature | null> {
         try {
-            const response = await axios.post<DigitalSignature>(API_URL, signature);
+            const formData = new FormData();
+            formData.append("photo", photoFile);
+
+            const response = await api.post<DigitalSignature>(
+                `${SIGNATURE_ENDPOINT}/user/${userId}`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
             return response.data;
         } catch (error) {
             console.error("Error al crear firma digital:", error);
@@ -47,28 +72,23 @@ class DigitalSignatureService {
     }
 
     /**
-     * Actualizar la firma digital de un usuario
-     * Usa user_id para encontrar y actualizar
+     * Actualizar firma digital por ID
+     * Backend espera FormData con 'photo' file
      */
-    async updateSignatureByUserId(userId: number, photo: string): Promise<DigitalSignature | null> {
+    async updateSignature(id: number, photoFile: File): Promise<DigitalSignature | null> {
         try {
-            const response = await axios.put<DigitalSignature>(
-                `${API_URL}/user/${userId}`,
-                { photo }
-            );
-            return response.data;
-        } catch (error) {
-            console.error("Error al actualizar firma digital:", error);
-            return null;
-        }
-    }
+            const formData = new FormData();
+            formData.append("photo", photoFile);
 
-    /**
-     * Actualizar firma por ID
-     */
-    async updateSignature(id: number, signature: Partial<DigitalSignature>): Promise<DigitalSignature | null> {
-        try {
-            const response = await axios.put<DigitalSignature>(`${API_URL}/${id}`, signature);
+            const response = await api.put<DigitalSignature>(
+                `${SIGNATURE_ENDPOINT}/${id}`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
             return response.data;
         } catch (error) {
             console.error("Error al actualizar firma digital:", error);
@@ -81,7 +101,7 @@ class DigitalSignatureService {
      */
     async deleteSignature(id: number): Promise<boolean> {
         try {
-            await axios.delete(`${API_URL}/${id}`);
+            await api.delete(`${SIGNATURE_ENDPOINT}/${id}`);
             return true;
         } catch (error) {
             console.error("Error al eliminar firma digital:", error);
@@ -90,28 +110,18 @@ class DigitalSignatureService {
     }
 
     /**
-     * Subir imagen de firma (si tu backend maneja uploads)
+     * Construir URL de imagen desde el backend Flask
      */
-    async uploadSignatureImage(userId: number, file: File): Promise<string | null> {
-        try {
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("user_id", userId.toString());
+    getImageUrl(filename: string): string {
+        if (!filename) return "";
 
-            const response = await axios.post<{ url: string }>(
-                `${API_URL}/upload`,
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
-            );
-            return response.data.url;
-        } catch (error) {
-            console.error("Error al subir imagen:", error);
-            return null;
+        // Si ya es una URL completa, devolverla
+        if (filename.startsWith("http")) {
+            return filename;
         }
+
+        // Construir URL del endpoint Flask
+        return `${API_URL}${SIGNATURE_ENDPOINT}/${filename}`;
     }
 }
 

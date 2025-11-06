@@ -1,7 +1,5 @@
 import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
-import UpdateDigitalSignature from '../pages/DigitalSignature/updateDigitalSignature';
-import ViewDigitalSignature from '../pages/DigitalSignature/ViewDigitalSignature';
 const Calendar = lazy(() => import('../pages/Calendar'));
 const CreateUser = lazy(() => import('../pages/Users/Create'));
 const ViewUser = lazy(() => import('../pages/Users/View'));
@@ -30,18 +28,52 @@ const UpdatePermission = lazy(
 const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
 const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
 const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
-import ListRolesPermission from '../pages/RolePermission/ListRolePermission';
+const DevicesList = lazy(() => import('../pages/Devices'));
+const DigitalSignature = lazy(() => import('../pages/DigitalSignature'));
+const SecurityQuestions = lazy(() => import('../pages/SecurityQuestion'));
+
+import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
+import ListSessions from '../pages/Session/ListSession';
+import CreateSession from '../pages/Session/CreateSession';
+import UpdateSession from '../pages/Session/UpdateSession';
+import ViewSession from '../pages/Session/ViewSession';
+
 
 const coreRoutes = [
     {
-        path: '/user/digital-signature/:userId',
-        component: ViewDigitalSignature,
-        title: 'Firma Digital',
+        path: '/user/security-questions/:userId',
+        component: SecurityQuestions,
+        title: 'Preguntas de Seguridad',
     },
     {
-        path: '/user/digital-signature/update/:userId',
-        component: UpdateDigitalSignature,
-        title: 'Actualizar Firma Digital',
+        path: '/user/devices/:userId',
+        component: DevicesList,
+        title: 'Dispositivos Usuario',
+    },
+    {
+        path: '/sessions/user/:id/view/:sessionId',
+        component: ViewSession,
+        title: 'Ver Sesion',
+    },
+    {
+        path: '/sessions/user/:id/update/:sessionId',
+        component: UpdateSession,
+        title: 'Actualizar Sesion',
+    },
+    {
+        path: '/sessions/user/:id/create',
+        component: CreateSession,
+        title: 'Crear Sesion',
+    },
+    {
+        path: '/sessions/user/:id',
+        component: ListSessions,
+        title: 'Listar Sesiones',
+    },
+    {
+        path: '/user/digital-signature/:userId',
+        component: DigitalSignature,
+        title: 'Firma Digital',
     },
     {
         path: '/demo',
