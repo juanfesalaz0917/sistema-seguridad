@@ -441,8 +441,8 @@ const DevicesListBootstrap: React.FC = () => {
                         <option value="Windows 10">Windows 10</option>
                         <option value="macOS Sonoma">macOS Sonoma</option>
                         <option value="macOS Ventura">macOS Ventura</option>
-                        <option value="iOS 17">iOS 17</option>
-                        <option value="iOS 16">iOS 16</option>
+                        <option value="iOS 17">iOS 26.0.1</option>
+                        <option value="iOS 16">iOS 18</option>
                         <option value="Android 14">Android 14</option>
                         <option value="Android 13">Android 13</option>
                         <option value="Ubuntu 22.04">Ubuntu 22.04</option>
