@@ -28,6 +28,7 @@ const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
 const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
 const DevicesList = lazy(() => import('../pages/Devices'));
 const DigitalSignature = lazy(() => import('../pages/DigitalSignature'));
+const SecurityQuestions = lazy(() => import('../pages/SecurityQuestion'));
 import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
 import ListSessions from '../pages/Session/ListSession';
 import CreateSession from '../pages/Session/CreateSession';
@@ -36,6 +37,11 @@ import ViewSession from '../pages/Session/ViewSession';
 
 
 const coreRoutes = [
+    {
+        path: '/user/security-questions/:userId',
+        component: SecurityQuestions,
+        title: 'Preguntas de Seguridad',
+    },
     {
         path: '/user/devices/:userId',
         component: DevicesList,

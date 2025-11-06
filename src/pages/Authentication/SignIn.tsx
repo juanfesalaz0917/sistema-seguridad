@@ -32,7 +32,7 @@ const SignIn: React.FC = () => {
       const response = await SecurityService.login(user as any);
       console.log('Usuario autenticado:', response);
       // Redirect to dashboard (root)
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Error al iniciar sesión', error);
     }
