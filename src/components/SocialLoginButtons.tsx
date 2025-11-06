@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     GoogleAuthProvider,
     OAuthProvider,
@@ -7,11 +8,17 @@ import {
 import { auth } from '../firebaseConfig';
 import { store } from '../store/store';
 import { setUser } from '../store/userSlice';
+import toast from 'react-hot-toast';
 
 const SocialLoginButtons = () => {
+    const [loading, setLoading] = useState(false);
+
     const handleLogin = async (
         providerName: 'google' | 'microsoft' | 'github',
     ) => {
+        if (loading) return; // prevent double clicks
+        setLoading(true);
+        
         try {
             let provider;
             switch (providerName) {
@@ -35,6 +42,10 @@ const SocialLoginButtons = () => {
             const result = await signInWithPopup(auth, provider);
             const firebaseUser = result.user;
             const apiUrl = import.meta.env.VITE_API_URL;
+
+            if (!apiUrl) {
+                throw new Error('VITE_API_URL no está configurada');
+            }
 
             if (!firebaseUser.email) {
                 throw new Error('El proveedor no proporcionó un email');
@@ -162,10 +173,14 @@ const SocialLoginButtons = () => {
             localStorage.setItem('user', JSON.stringify(finalUser));
 
             console.log('✅ Usuario logueado correctamente:', finalUser);
+            toast.success('Login exitoso');
             
         } catch (err: any) {
             console.error('❌ Error login social:', err);
-            alert(err.message || 'Error durante el inicio de sesión');
+            toast.error(err?.message || 'Error durante el inicio de sesión');
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -174,40 +189,43 @@ const SocialLoginButtons = () => {
             <button
                 type="button"
                 onClick={() => handleLogin('google')}
-                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                disabled={loading}
+                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
                 <img
                     src="https://www.svgrepo.com/show/475656/google-color.svg"
                     alt="Google"
                     className="w-5 h-5"
                 />
-                Continuar con Google
+                {loading ? 'Procesando...' : 'Continuar con Google'}
             </button>
 
             <button
                 type="button"
                 onClick={() => handleLogin('microsoft')}
-                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                disabled={loading}
+                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
                 <img
                     src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg"
                     alt="Microsoft"
                     className="w-5 h-5"
                 />
-                Continuar con Microsoft
+                {loading ? 'Procesando...' : 'Continuar con Microsoft'}
             </button>
 
             <button
                 type="button"
                 onClick={() => handleLogin('github')}
-                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                disabled={loading}
+                className="flex items-center gap-2 border p-3 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
                 <img
                     src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
                     alt="GitHub"
                     className="w-5 h-5"
                 />
-                Continuar con GitHub
+                {loading ? 'Procesando...' : 'Continuar con GitHub'}
             </button>
         </div>
     );
