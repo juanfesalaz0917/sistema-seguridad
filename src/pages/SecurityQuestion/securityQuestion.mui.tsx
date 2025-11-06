@@ -1,591 +1,391 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { securityQuestionService } from '../../services/securityQuestionService';
-import { userService } from '../../services/userService';
-import { SecurityQuestion } from '../../models/SecurityQuestion';
-import { UserSecurityAnswerView } from '../../models/UserSecurityAnswer';
-import { User } from '../../models/User';
-import Swal from 'sweetalert2';
-import GenericButton from '../../components/GenericButton';
-import {
-    Box,
-    Card,
-    CardContent,
-    CardActions,
-    Typography,
-    CircularProgress,
-    Alert,
-    Chip,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    IconButton,
-    useTheme,
-    alpha,
-    SelectChangeEvent,
-} from '@mui/material';
-import {
-    ArrowBack as ArrowBackIcon,
-    Add as AddIcon,
-    Edit as EditIcon,
-    Delete as DeleteIcon,
-    Lock as LockIcon,
-    Shield as ShieldIcon,
-    QuestionMark as QuestionMarkIcon,
-    CheckCircle as CheckCircleIcon,
-    CalendarToday as CalendarIcon,
-    Save as SaveIcon,
-    Close as CloseIcon,
-} from '@mui/icons-material';
+// src/pages/SecurityQuestions/SecurityQuestions.bootstrap.tsx
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { securityQuestionService } from "../../services/securityQuestionService";
+import { userService } from "../../services/userService";
+import { SecurityQuestion } from "../../models/SecurityQuestion";
+import { UserSecurityAnswerView } from "../../models/UserSecurityAnswer";
+import { User } from "../../models/User";
+import Swal from "sweetalert2";
+import answerService from "../../services/AnswerService";
 
-const SecurityQuestionsMui: React.FC = () => {
-    const { userId } = useParams<{ userId: string }>();
-    const navigate = useNavigate();
-    const theme = useTheme();
+const SecurityQuestionsBootstrap: React.FC = () => {
+  const { userId } = useParams<{ userId: string }>();
+  const navigate = useNavigate();
 
-    const [user, setUser] = useState<User | null>(null);
-    const [allQuestions, setAllQuestions] = useState<SecurityQuestion[]>([]);
-    const [userAnswers, setUserAnswers] = useState<UserSecurityAnswerView[]>(
-        [],
-    );
-    const [loading, setLoading] = useState<boolean>(true);
-    const [showModal, setShowModal] = useState<boolean>(false);
-    const [editingAnswer, setEditingAnswer] =
-        useState<UserSecurityAnswerView | null>(null);
-    const [formData, setFormData] = useState({
-        security_question_id: 0,
-        answer: '',
-    });
+  const [user, setUser] = useState<User | null>(null);
+  const [allQuestions, setAllQuestions] = useState<SecurityQuestion[]>([]);
+  const [userAnswers, setUserAnswers] = useState<UserSecurityAnswerView[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        if (userId) {
-            fetchData(parseInt(userId));
-        }
-    }, [userId]);
+  // UI state para modal de respuestas (usuario)
+  const [showAnswerModal, setShowAnswerModal] = useState(false);
+  const [editingAnswer, setEditingAnswer] = useState<UserSecurityAnswerView | null>(null);
+  const [answerForm, setAnswerForm] = useState({ security_question_id: 0, answer: "" });
 
-    const fetchData = async (id: number) => {
-        try {
-            setLoading(true);
+  // UI state para modal de preguntas (catálogo)
+  const [showQuestionModal, setShowQuestionModal] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<SecurityQuestion | null>(null);
+  const [questionForm, setQuestionForm] = useState({ name: "", description: "" });
 
-            // Obtener usuario
-            const userData = await userService.getUserById(id);
-            if (!userData) {
-                Swal.fire('Error', 'Usuario no encontrado', 'error');
-                navigate('/user/list');
-                return;
-            }
-            setUser(userData);
+  useEffect(() => {
+    if (userId) fetchAll(parseInt(userId, 10));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
-            // Obtener todas las preguntas disponibles
-            const questionsData =
-                await securityQuestionService.getAllQuestions();
-            setAllQuestions(questionsData);
+  const fetchAll = async (id: number) => {
+    try {
+      setLoading(true);
+      // usuario
+      const u = await userService.getUserById(id);
+      setUser(u ?? null);
 
-            // Obtener respuestas del usuario
-            const answersData =
-                await securityQuestionService.getUserAnswers(id);
-            setUserAnswers(answersData);
-
-            setLoading(false);
-        } catch (err) {
-            console.error('Error:', err);
-            setLoading(false);
-        }
-    };
-
-    const handleBack = () => {
-        navigate('/user/list');
-    };
-
-    const handleOpenModal = (answer?: UserSecurityAnswerView) => {
-        if (answer) {
-            // Editar respuesta existente
-            setEditingAnswer(answer);
-            setFormData({
-                security_question_id: answer.security_question_id,
-                answer: '', // No mostrar la respuesta actual por seguridad
-            });
-        } else {
-            // Crear nueva respuesta
-            setEditingAnswer(null);
-            setFormData({
-                security_question_id: 0,
-                answer: '',
-            });
-        }
-        setShowModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-        setEditingAnswer(null);
-        setFormData({
-            security_question_id: 0,
-            answer: '',
-        });
-    };
-
-    const handleInputChange = (
-        e:
-            | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-            | SelectChangeEvent<number | string>,
-    ) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name as string]:
-                name === 'security_question_id'
-                    ? parseInt(value as string)
-                    : value,
-        });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!formData.security_question_id || !formData.answer.trim()) {
-            Swal.fire(
-                'Error',
-                'Debes seleccionar una pregunta y proporcionar una respuesta',
-                'error',
-            );
-            return;
-        }
-
-        try {
-            let success;
-            if (editingAnswer) {
-                // Actualizar respuesta existente
-                success = await securityQuestionService.updateAnswer(
-                    editingAnswer.id!,
-                    formData.answer,
-                );
-                if (success) {
-                    await Swal.fire(
-                        'Actualizada',
-                        'Respuesta actualizada correctamente',
-                        'success',
-                    );
-                }
-            } else {
-                // Crear nueva respuesta
-                success = await securityQuestionService.createAnswer({
-                    user_id: parseInt(userId!),
-                    security_question_id: formData.security_question_id,
-                    answer: formData.answer,
-                });
-                if (success) {
-                    await Swal.fire(
-                        'Creada',
-                        'Respuesta registrada correctamente',
-                        'success',
-                    );
-                }
-            }
-
-            if (success) {
-                handleCloseModal();
-                fetchData(parseInt(userId!));
-            } else {
-                Swal.fire('Error', 'No se pudo guardar la respuesta', 'error');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Error', 'Ocurrió un error al guardar', 'error');
-        }
-    };
-
-    const handleDelete = async (answer: UserSecurityAnswerView) => {
-        const result = await Swal.fire({
-            title: 'Eliminar respuesta',
-            text: `¿Estás seguro de eliminar la respuesta a "${answer.question_name}"?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-        });
-
-        if (result.isConfirmed) {
-            const success = await securityQuestionService.deleteAnswer(
-                answer.id!,
-            );
-            if (success) {
-                await Swal.fire(
-                    'Eliminada',
-                    'La respuesta ha sido eliminada',
-                    'success',
-                );
-                fetchData(parseInt(userId!));
-            } else {
-                Swal.fire('Error', 'No se pudo eliminar la respuesta', 'error');
-            }
-        }
-    };
-
-    // Filtrar preguntas que ya han sido respondidas
-    const getAvailableQuestions = () => {
-        const answeredQuestionIds = userAnswers.map(
-            (a) => a.security_question_id,
-        );
-        return allQuestions.filter((q) => !answeredQuestionIds.includes(q.id!));
-    };
-
-    if (loading) {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    minHeight: '400px',
-                }}
-            >
-                <CircularProgress size={60} />
-            </Box>
-        );
+      // preguntas y respuestas
+      const questions = await securityQuestionService.getAllQuestions();
+      const answers = await answerService.getAnswersByUser(id);
+      setAllQuestions(questions);
+      setUserAnswers(answers);
+    } catch (err) {
+      console.error("Error fetchAll:", err);
+      Swal.fire("Error", "Ocurrió un error cargando datos (ver consola)", "error");
+    } finally {
+      setLoading(false);
     }
+  };
 
+  // ---------- helpers ----------
+  const availableQuestionsForUser = () => {
+    const answeredIds = userAnswers.map((a) => a.security_question_id);
+    return allQuestions.filter((q) => typeof q.id === "number" && !answeredIds.includes(q.id!));
+  };
+
+  // ---------- Question (catalog) CRUD ----------
+  const openCreateQuestion = () => {
+    setEditingQuestion(null);
+    setQuestionForm({ name: "", description: "" });
+    setShowQuestionModal(true);
+  };
+
+  const openEditQuestion = (q: SecurityQuestion) => {
+    setEditingQuestion(q);
+    setQuestionForm({ name: q.name ?? "", description: q.description ?? "" });
+    setShowQuestionModal(true);
+  };
+
+  const submitQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!questionForm.name.trim()) {
+      Swal.fire("Error", "El nombre de la pregunta es obligatorio", "error");
+      return;
+    }
+    try {
+      if (editingQuestion && editingQuestion.id) {
+        const res = await securityQuestionService.updateQuestion(editingQuestion.id, questionForm);
+        if (res) {
+          Swal.fire("Actualizada", "Pregunta actualizada correctamente", "success");
+        } else {
+          Swal.fire("Error", "No se pudo actualizar la pregunta", "error");
+        }
+      } else {
+        const res = await securityQuestionService.createQuestion(questionForm);
+        if (res) {
+          Swal.fire("Creada", "Pregunta creada correctamente", "success");
+        } else {
+          Swal.fire("Error", "No se pudo crear la pregunta", "error");
+        }
+      }
+      setShowQuestionModal(false);
+      // refrescar lista
+      if (userId) await fetchAll(parseInt(userId, 10));
+    } catch (err) {
+      console.error("submitQuestion error:", err);
+      Swal.fire("Error", "Ocurrió un error (ver consola)", "error");
+    }
+  };
+
+  const handleDeleteQuestion = async (q: SecurityQuestion) => {
+    if (!q.id) return;
+    const ok = await Swal.fire({
+      title: "Eliminar pregunta",
+      text: `¿Seguro quieres eliminar la pregunta "${q.name}"? Esto eliminará también respuestas asociadas.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+    });
+    if (ok.isConfirmed) {
+      const success = await securityQuestionService.deleteQuestion(q.id);
+      if (success) {
+        Swal.fire("Eliminada", "Pregunta eliminada", "success");
+        if (userId) fetchAll(parseInt(userId, 10));
+      } else {
+        Swal.fire("Error", "No se pudo eliminar la pregunta", "error");
+      }
+    }
+  };
+
+  // ---------- User answers ----------
+  const openCreateAnswer = () => {
+    setEditingAnswer(null);
+    setAnswerForm({ security_question_id: 0, answer: "" });
+    setShowAnswerModal(true);
+  };
+
+  const openEditAnswer = (ans: UserSecurityAnswerView) => {
+    setEditingAnswer(ans);
+    setAnswerForm({ security_question_id: ans.security_question_id, answer: "" }); // no mostrar texto real
+    setShowAnswerModal(true);
+  };
+
+  const submitAnswer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!answerForm.security_question_id || !answerForm.answer.trim()) {
+      Swal.fire("Error", "Selecciona pregunta y escribe la respuesta", "error");
+      return;
+    }
+    try {
+      if (editingAnswer && editingAnswer.id) {
+        const res = await answerService.updateAnswer(editingAnswer.id, answerForm.answer);
+        if (res) Swal.fire("Actualizada", "Respuesta actualizada", "success");
+        else Swal.fire("Error", "No se pudo actualizar respuesta", "error");
+      } else {
+        const payload = {
+          user_id: parseInt(userId!, 10),
+          security_question_id: answerForm.security_question_id,
+          answer: answerForm.answer,
+        };
+        const res = await answerService.createAnswer(payload);
+        if (res) Swal.fire("Creada", "Respuesta creada correctamente", "success");
+        else Swal.fire("Error", "No se pudo crear la respuesta", "error");
+      }
+      setShowAnswerModal(false);
+      if (userId) fetchAll(parseInt(userId, 10));
+    } catch (err) {
+      console.error("submitAnswer error:", err);
+      Swal.fire("Error", "Ocurrió un error (ver consola)", "error");
+    }
+  };
+
+  const handleDeleteAnswer = async (ans: UserSecurityAnswerView) => {
+    const ok = await Swal.fire({
+      title: "Eliminar respuesta",
+      text: `¿Seguro quieres eliminar la respuesta a "${ans.question_name}"?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+    });
+    if (ok.isConfirmed && ans.id) {
+      const success = await answerService.deleteAnswer(ans.id);
+      if (success) {
+        Swal.fire("Eliminada", "Respuesta eliminada", "success");
+        if (userId) fetchAll(parseInt(userId, 10));
+      } else {
+        Swal.fire("Error", "No se pudo eliminar respuesta", "error");
+      }
+    }
+  };
+
+  // ---------- UI ----------
+  if (loading) {
     return (
-        <Box sx={{ p: { xs: 2, md: 3 } }}>
-            {/* Header */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    mb: 4,
-                    flexWrap: 'wrap',
-                    gap: 2,
-                }}
-            >
-                <Box>
-                    <Typography
-                        variant="h4"
-                        component="h2"
-                        sx={{ fontWeight: 600, mb: 1 }}
-                    >
-                        Preguntas de Seguridad
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                        Usuario: <strong>{user?.name}</strong> ({user?.email})
-                    </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {getAvailableQuestions().length > 0 && (
-                        <GenericButton
-                            variant="primary"
-                            onClick={() => handleOpenModal()}
-                        >
-                            <AddIcon sx={{ mr: 1, fontSize: 20 }} />
-                            Agregar Respuesta
-                        </GenericButton>
-                    )}
-                    <GenericButton variant="secondary" onClick={handleBack}>
-                        <ArrowBackIcon sx={{ mr: 1, fontSize: 20 }} />
-                        Volver
-                    </GenericButton>
-                </Box>
-            </Box>
-
-            {/* Información de seguridad */}
-            <Alert severity="info" icon={<ShieldIcon />} sx={{ mb: 4 }}>
-                Las preguntas de seguridad ayudan a recuperar el acceso a tu
-                cuenta. Se recomienda configurar al menos 3 preguntas.
-            </Alert>
-
-            {/* Lista de respuestas configuradas */}
-            {userAnswers.length === 0 ? (
-                <Card elevation={3}>
-                    <CardContent
-                        sx={{
-                            textAlign: 'center',
-                            py: 8,
-                        }}
-                    >
-                        <QuestionMarkIcon
-                            sx={{
-                                fontSize: 80,
-                                color: 'text.secondary',
-                                mb: 2,
-                            }}
-                        />
-                        <Typography
-                            variant="h6"
-                            color="text.secondary"
-                            gutterBottom
-                        >
-                            No hay preguntas de seguridad configuradas
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mb: 3 }}
-                        >
-                            Agrega preguntas de seguridad para proteger tu
-                            cuenta.
-                        </Typography>
-                        {getAvailableQuestions().length > 0 && (
-                            <GenericButton
-                                variant="primary"
-                                onClick={() => handleOpenModal()}
-                            >
-                                <AddIcon sx={{ mr: 1, fontSize: 20 }} />
-                                Configurar Primera Pregunta
-                            </GenericButton>
-                        )}
-                    </CardContent>
-                </Card>
-            ) : (
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2,
-                    }}
-                >
-                    {userAnswers.map((answer, index) => (
-                        <Card key={answer.id} elevation={3}>
-                            <CardContent>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'flex-start',
-                                        gap: 2,
-                                    }}
-                                >
-                                    <Box sx={{ flex: 1 }}>
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 1,
-                                                mb: 1,
-                                            }}
-                                        >
-                                            <Chip
-                                                label={index + 1}
-                                                color="primary"
-                                                size="small"
-                                            />
-                                            <Typography
-                                                variant="h6"
-                                                component="h3"
-                                            >
-                                                {answer.question_name}
-                                            </Typography>
-                                        </Box>
-                                        {answer.question_description && (
-                                            <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                                sx={{ mb: 2 }}
-                                            >
-                                                {answer.question_description}
-                                            </Typography>
-                                        )}
-                                        <Alert
-                                            severity="info"
-                                            icon={<LockIcon />}
-                                            sx={{ mt: 2 }}
-                                        >
-                                            <Typography variant="caption">
-                                                Respuesta configurada y
-                                                encriptada
-                                            </Typography>
-                                        </Alert>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', gap: 1 }}>
-                                        <IconButton
-                                            size="small"
-                                            color="warning"
-                                            onClick={() =>
-                                                handleOpenModal(answer)
-                                            }
-                                            title="Cambiar respuesta"
-                                            sx={{
-                                                border: 1,
-                                                borderColor: 'warning.main',
-                                            }}
-                                        >
-                                            <EditIcon fontSize="small" />
-                                        </IconButton>
-                                        <IconButton
-                                            size="small"
-                                            color="error"
-                                            onClick={() => handleDelete(answer)}
-                                            title="Eliminar"
-                                            sx={{
-                                                border: 1,
-                                                borderColor: 'error.main',
-                                            }}
-                                        >
-                                            <DeleteIcon fontSize="small" />
-                                        </IconButton>
-                                    </Box>
-                                </Box>
-                            </CardContent>
-                            {answer.created_at && (
-                                <CardActions
-                                    sx={{
-                                        bgcolor: alpha(
-                                            theme.palette.background.default,
-                                            0.5,
-                                        ),
-                                        px: 2,
-                                        py: 1,
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 0.5,
-                                        }}
-                                    >
-                                        <CalendarIcon
-                                            fontSize="small"
-                                            color="action"
-                                        />
-                                        <Typography
-                                            variant="caption"
-                                            color="text.secondary"
-                                        >
-                                            Configurada:{' '}
-                                            {new Date(
-                                                answer.created_at,
-                                            ).toLocaleDateString()}
-                                        </Typography>
-                                    </Box>
-                                </CardActions>
-                            )}
-                        </Card>
-                    ))}
-                </Box>
-            )}
-
-            {/* Resumen */}
-            {userAnswers.length > 0 && (
-                <Alert
-                    severity="success"
-                    icon={<CheckCircleIcon />}
-                    sx={{ mt: 4 }}
-                >
-                    <Typography variant="body2">
-                        <strong>Preguntas configuradas:</strong>{' '}
-                        {userAnswers.length} de {allQuestions.length}
-                    </Typography>
-                </Alert>
-            )}
-
-            {/* Modal de Crear/Editar */}
-            <Dialog
-                open={showModal}
-                onClose={handleCloseModal}
-                maxWidth="sm"
-                fullWidth
-            >
-                <DialogTitle>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Typography variant="h6">
-                            {editingAnswer
-                                ? 'Cambiar Respuesta'
-                                : 'Nueva Pregunta de Seguridad'}
-                        </Typography>
-                        <IconButton
-                            size="small"
-                            onClick={handleCloseModal}
-                            sx={{ color: 'text.secondary' }}
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
-                </DialogTitle>
-                <form onSubmit={handleSubmit}>
-                    <DialogContent dividers>
-                        {!editingAnswer ? (
-                            <FormControl fullWidth sx={{ mb: 3 }}>
-                                <InputLabel id="question-select-label">
-                                    Pregunta de Seguridad *
-                                </InputLabel>
-                                <Select
-                                    labelId="question-select-label"
-                                    name="security_question_id"
-                                    value={formData.security_question_id || ''}
-                                    onChange={handleInputChange}
-                                    label="Pregunta de Seguridad *"
-                                    required
-                                >
-                                    <MenuItem value="">
-                                        <em>Seleccionar pregunta...</em>
-                                    </MenuItem>
-                                    {getAvailableQuestions().map((q) => (
-                                        <MenuItem key={q.id} value={q.id}>
-                                            {q.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        ) : (
-                            <Box sx={{ mb: 3 }}>
-                                <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                    sx={{
-                                        fontWeight: 600,
-                                        textTransform: 'uppercase',
-                                    }}
-                                >
-                                    Pregunta:
-                                </Typography>
-                                <Typography variant="body1" sx={{ mt: 0.5 }}>
-                                    {editingAnswer.question_name}
-                                </Typography>
-                            </Box>
-                        )}
-
-                        <TextField
-                            fullWidth
-                            label="Tu Respuesta *"
-                            name="answer"
-                            value={formData.answer}
-                            onChange={handleInputChange}
-                            placeholder="Ingresa tu respuesta"
-                            required
-                            autoComplete="off"
-                            helperText="Esta respuesta se utilizará para verificar tu identidad. No la compartas con nadie."
-                        />
-                    </DialogContent>
-                    <DialogActions sx={{ px: 3, py: 2 }}>
-                        <GenericButton
-                            variant="secondary"
-                            onClick={handleCloseModal}
-                        >
-                            Cancelar
-                        </GenericButton>
-                        <GenericButton variant="success" type="submit">
-                            <SaveIcon sx={{ mr: 1, fontSize: 20 }} />
-                            {editingAnswer ? 'Actualizar' : 'Guardar'}
-                        </GenericButton>
-                    </DialogActions>
-                </form>
-            </Dialog>
-        </Box>
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="container-fluid">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 className="mb-1">Preguntas de Seguridad</h2>
+          <p className="text-muted mb-0">
+            Usuario: <strong>{user?.name}</strong> ({user?.email})
+          </p>
+        </div>
+        <div className="d-flex gap-2">
+          <button className="btn btn-outline-secondary" onClick={() => navigate("/user/list")}>
+            <i className="bi bi-arrow-left me-2"></i> Volver
+          </button>
+        </div>
+      </div>
+
+      <div className="row g-4">
+        {/* Left: Catálogo (CRUD preguntas) */}
+        <div className="col-12 col-lg-6">
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="mb-0">Catálogo de Preguntas</h5>
+                <div>
+                  <button className="btn btn-sm btn-primary" onClick={openCreateQuestion}>
+                    <i className="bi bi-plus-lg me-1"></i> Nueva Pregunta
+                  </button>
+                </div>
+              </div>
+
+              {allQuestions.length === 0 ? (
+                <div className="text-center py-4">
+                  <i className="bi bi-list-task fs-1 text-muted mb-2 d-block"></i>
+                  <p className="text-muted">No hay preguntas en el catálogo. Crea la primera.</p>
+                </div>
+              ) : (
+                <ul className="list-group">
+                  {allQuestions.map((q) => (
+                    <li key={q.id} className="list-group-item d-flex justify-content-between align-items-start">
+                      <div>
+                        <div className="fw-semibold">{q.name}</div>
+                        {q.description && <small className="text-muted d-block">{q.description}</small>}
+                      </div>
+                      <div className="d-flex gap-2">
+                        <button className="btn btn-sm btn-outline-primary" onClick={() => openEditQuestion(q)}>
+                          <i className="bi bi-pencil"></i>
+                        </button>
+                        <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteQuestion(q)}>
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Respuestas del usuario */}
+        <div className="col-12 col-lg-6">
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="mb-0">Respuestas del Usuario</h5>
+                <div>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={openCreateAnswer}
+                    disabled={availableQuestionsForUser().length === 0}
+                    title={availableQuestionsForUser().length === 0 ? "No hay preguntas disponibles" : "Agregar respuesta"}
+                  >
+                    <i className="bi bi-plus-lg me-1"></i> Agregar Respuesta
+                  </button>
+                </div>
+              </div>
+
+              {userAnswers.length === 0 ? (
+                <div className="text-center py-4">
+                  <i className="bi bi-question-circle fs-1 text-muted mb-2 d-block"></i>
+                  <p className="text-muted">Aún no hay respuestas configuradas.</p>
+                  {availableQuestionsForUser().length > 0 && (
+                    <button className="btn btn-primary btn-sm" onClick={openCreateAnswer}>
+                      <i className="bi bi-plus-lg me-1"></i> Configurar Primera Respuesta
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="list-group">
+                  {userAnswers.map((ans) => (
+                    <div key={ans.id} className="list-group-item d-flex justify-content-between align-items-start">
+                      <div>
+                        <div className="fw-semibold">{ans.question_name}</div>
+                        <small className="text-muted">Respuesta configurada</small>
+                      </div>
+                      <div className="d-flex gap-2">
+                        <button className="btn btn-sm btn-outline-warning" onClick={() => openEditAnswer(ans)}>
+                          <i className="bi bi-pencil"></i>
+                        </button>
+                        <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteAnswer(ans)}>
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="card-footer bg-light">
+              <small className="text-muted">
+                {userAnswers.length} respuestas configuradas • {allQuestions.length} preguntas en catálogo
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Pregunta (crear/editar catálogo) */}
+      {showQuestionModal && (
+        <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <form className="modal-content" onSubmit={submitQuestion}>
+              <div className="modal-header">
+                <h5 className="modal-title">{editingQuestion ? "Editar Pregunta" : "Nueva Pregunta"}</h5>
+                <button type="button" className="btn-close" onClick={() => setShowQuestionModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Nombre <span className="text-danger">*</span></label>
+                  <input className="form-control" value={questionForm.name} onChange={(e) => setQuestionForm({ ...questionForm, name: e.target.value })} required />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Descripción</label>
+                  <textarea className="form-control" value={questionForm.description} onChange={(e) => setQuestionForm({ ...questionForm, description: e.target.value })} />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowQuestionModal(false)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary">{editingQuestion ? "Actualizar" : "Crear"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Respuesta (usuario) */}
+      {showAnswerModal && (
+        <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <form className="modal-content" onSubmit={submitAnswer}>
+              <div className="modal-header">
+                <h5 className="modal-title">{editingAnswer ? "Cambiar Respuesta" : "Nueva Respuesta"}</h5>
+                <button type="button" className="btn-close" onClick={() => setShowAnswerModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                {!editingAnswer && (
+                  <div className="mb-3">
+                    <label className="form-label">Pregunta <span className="text-danger">*</span></label>
+                    <select className="form-select" value={answerForm.security_question_id} onChange={(e) => setAnswerForm({ ...answerForm, security_question_id: parseInt(e.target.value || "0", 10) })} required>
+                      <option value={0}>Seleccionar...</option>
+                      {availableQuestionsForUser().map((q) => (
+                        <option key={q.id} value={q.id}>
+                          {q.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {editingAnswer && (
+                  <div className="mb-3">
+                    <label className="form-label">Pregunta</label>
+                    <p className="mb-2">{editingAnswer.question_name}</p>
+                  </div>
+                )}
+                <div className="mb-3">
+                  <label className="form-label">Respuesta <span className="text-danger">*</span></label>
+                  <input className="form-control" value={answerForm.answer} onChange={(e) => setAnswerForm({ ...answerForm, answer: e.target.value })} required autoComplete="off" />
+                  <small className="text-muted">No compartas esta respuesta con nadie.</small>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowAnswerModal(false)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary">{editingAnswer ? "Actualizar" : "Guardar"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default SecurityQuestionsMui;
+export default SecurityQuestionsBootstrap;
