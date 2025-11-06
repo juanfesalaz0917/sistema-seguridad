@@ -1,5 +1,5 @@
 // src/pages/Devices/index.tsx
-import React, { Suspense, SuspenseProps } from "react";
+import React, { Suspense } from "react";
 import { useUiLibrary } from "../../context/UiLibraryContext";
 
 // Lazy loading de las implementaciones
