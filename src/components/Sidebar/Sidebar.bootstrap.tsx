@@ -152,7 +152,7 @@ const SidebarBootstrap: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen 
             {/* Permissions */}
             <li className="nav-item">
               <NavLink
-                to="/permission/list"
+                to="/permissions/list"
                 className={({ isActive }) =>
                   "nav-link d-flex align-items-center gap-2 px-3 py-2 rounded" +
                   (isActive ? " active-bootstrap" : " text-bodydark1")
