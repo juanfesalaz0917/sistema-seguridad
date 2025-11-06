@@ -26,14 +26,21 @@ const UpdatePermission = lazy(
 const ViewPermission = lazy(() => import('../pages/Permission/ViewPermission'));
 const ViewProfile = lazy(() => import('../pages/Profile/ViewProfile'));
 const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
+const DevicesList = lazy(() => import('../pages/Devices'));
+const DigitalSignature = lazy(() => import('../pages/DigitalSignature'));
 import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
 import ListSessions from '../pages/Session/ListSession';
 import CreateSession from '../pages/Session/CreateSession';
 import UpdateSession from '../pages/Session/UpdateSession';
 import ViewSession from '../pages/Session/ViewSession';
-import DigitalSignature from '../pages/DigitalSignature';
+
 
 const coreRoutes = [
+    {
+        path: '/user/devices/:userId',
+        component: DevicesList,
+        title: 'Dispositivos Usuario',
+    },
     {
         path: '/sessions/user/:id/view/:sessionId',
         component: ViewSession,

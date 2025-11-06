@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import { User } from '../../models/User';
 import SecurityService from '../../services/securityService';
 
 import { useNavigate } from 'react-router-dom';
@@ -10,20 +9,34 @@ import Breadcrumb from '../../components/Breadcrumb';
 import SocialLoginButtons from '../../components/SocialLoginButtons';
 
 const SignIn: React.FC = () => {
-    const navigate = useNavigate();
-    const handleLogin = async (user: User) => {
-        //este metodo integra la llamada al servicio de login, el store y la navegación
-        console.log('aqui ' + JSON.stringify(user));
-        try {
-            const response = await SecurityService.login(user);
-            console.log('Usuario autenticado:', response);
-            navigate('/user/create');
-        } catch (error) {
-            console.error('Error al iniciar sesión', error);
-            const err: any = error;
-            alert(err.message || 'Error al iniciar sesión');
-        }
-    };
+  const navigate = useNavigate();
+
+  // If already authenticated (token present), redirect to dashboard
+  useEffect(() => {
+    try {
+      if (SecurityService.isAuthenticated()) {
+        navigate('/');
+      }
+    } catch (err) {
+      // ignore
+    }
+  }, [navigate]);
+
+  type LoginForm = { email: string; password: string };
+
+  const handleLogin = async (user: LoginForm) => {
+    // este metodo integra la llamada al servicio de login, el store y la navegación
+    console.log('aqui ' + JSON.stringify(user));
+    try {
+      // SecurityService.login expects a User type; cast here for the HTTP payload
+      const response = await SecurityService.login(user as any);
+      console.log('Usuario autenticado:', response);
+      // Redirect to dashboard (root)
+      navigate('/');
+    } catch (error) {
+      console.error('Error al iniciar sesión', error);
+    }
+  };
 
     return (
         <>

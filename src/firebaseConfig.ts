@@ -1,35 +1,38 @@
-// Importa las funciones necesarias del SDK
-import { initializeApp, getApps, getApp } from "firebase/app";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  GithubAuthProvider,
-  OAuthProvider,
-} from "firebase/auth";
+// Firebase initialization and exports for the app
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
+import { getAuth, browserLocalPersistence, setPersistence } from 'firebase/auth';
 
-// Configuración de Firebase (la que te daba la app desde la consola)
+// Prefer environment variables (Vite) and fall back to the existing hard-coded values
 const firebaseConfig = {
-  apiKey: "AIzaSyAvq1khoy2DNHdlxNHK8GXkAO3ZkjK5w64",
-  authDomain: "frontendreact-c6632.firebaseapp.com",
-  projectId: "frontendreact-c6632",
-  storageBucket: "frontendreact-c6632.firebasestorage.app",
-  messagingSenderId: "801883072689",
-  appId: "1:801883072689:web:faf4aa577125c9a8989a90"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyB1zqye8_phrbT-a_KEHj04pbYKE2N3vDc',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'sistema-seguridad-a2d26.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'sistema-seguridad-a2d26',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'sistema-seguridad-a2d26.appspot.com',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '6830682101',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:6830682101:web:a013da0efc5a7d2e027abc',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-2MM21KWTP3',
 };
 
-// Evitar inicializaciones múltiples
+// Initialize or reuse the app (avoids multiple initializations during HMR)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Inicializar Auth
-export const auth = getAuth(app);
+// Analytics is only available in browser runtime; guard to avoid SSR issues
+let analytics: ReturnType<typeof getAnalytics> | undefined;
+if (typeof window !== 'undefined') {
+  try {
+    analytics = getAnalytics(app);
+  } catch (err) {
+    // analytics will fail in some environments (e.g., private mode, blocked cookies); ignore
+    // console.warn('Firebase analytics not available', err);
+  }
+}
 
-// Exportar proveedores (para usarlos donde quieras)
-export const googleProvider = new GoogleAuthProvider();
-export const githubProvider = new GithubAuthProvider();
-export const microsoftProvider = new OAuthProvider("microsoft.com");
+// Auth export
+const auth = getAuth(app);
+// Prefer persistent login in browser localStorage
+setPersistence(auth, browserLocalPersistence).catch(() => {
+  // ignore persistence errors (e.g. if the environment does not allow localStorage)
+});
 
-// Parámetros opcionales
-googleProvider.setCustomParameters({ prompt: "select_account" });
-microsoftProvider.setCustomParameters({ prompt: "select_account" });
-
-export default app;
+export { app, analytics, auth, firebaseConfig };
