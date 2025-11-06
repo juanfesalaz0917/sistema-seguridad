@@ -3,9 +3,6 @@ import { lazy } from 'react';
 import UpdateUser from '../pages/Users/Update';
 import UpdateDigitalSignature from '../pages/DigitalSignature/updateDigitalSignature';
 import ViewDigitalSignature from '../pages/DigitalSignature/ViewDigitalSignature';
-import { Devices } from '@mui/icons-material';
-import DevicesListBootstrap from '../pages/Devices/DevicesList.bootstrap';
-
 const Calendar = lazy(() => import('../pages/Calendar'));
 const CreateUser = lazy(() => import('../pages/Users/Create'));
 const ViewUser = lazy(() => import('../pages/Users/View'));

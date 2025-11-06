@@ -3,7 +3,7 @@ import axios from "axios";
 import { DigitalSignature, DigitalSignatureInput } from "../models/DigitalSignature";
 import api from "../interceptors/axiosInterceptor";
 
-const API_URL = import.meta.env.VITE_API_URL + "/digital-signatures" || "";
+const API_URL = import.meta.env.VITE_API_URL + "/digital_signature_bp" || "";
 
 class DigitalSignatureService {
     /**
@@ -12,7 +12,7 @@ class DigitalSignatureService {
      */
     async getSignatureByUserId(userId: number): Promise<DigitalSignature | null> {
         try {
-            const response = await api.get<DigitalSignature>(`/digital-signatures/user/${userId}`);
+            const response = await api.get<DigitalSignature>(`/${API_URL}/user/${userId}`);
             return response.data;
         } catch (error) {
             console.error("Error al obtener firma digital:", error);
