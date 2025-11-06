@@ -19,16 +19,7 @@ import {
     useTheme,
 } from '@mui/material';
 import {
-    Dashboard as DashboardIcon,
-    CalendarMonth as CalendarIcon,
-    Person as PersonIcon,
     Security as SecurityIcon,
-    Description as FormIcon,
-    TableChart as TableIcon,
-    Settings as SettingsIcon,
-    BarChart as ChartIcon,
-    Widgets as WidgetsIcon,
-    Login as AuthIcon,
     ExpandLess,
     ExpandMore,
     ChevronLeft,
@@ -80,10 +71,6 @@ const SidebarMui: React.FC<SidebarProps> = ({
     };
 
     const drawerWidth = 290;
-
-    const isActiveRoute = (route: string) => {
-        return pathname === route || pathname.includes(route);
-    };
 
     if (!user) {
         return null;

@@ -6,11 +6,41 @@ export const GenericButtonMui: React.FC<GenericButtonProps> = ({
     children,
     onClick,
     type = 'button',
+    variant = 'primary',
     disabled = false,
     className = '',
 }) => {
-    const muiVariant = 'outlined';
-    const muiColor = 'primary';
+    const getButtonProps = () => {
+        switch (variant) {
+            case 'primary':
+                return {
+                    variant: 'outlined' as const,
+                    color: 'primary' as const,
+                };
+            case 'secondary':
+                return {
+                    variant: 'outlined' as const,
+                    color: 'inherit' as const,
+                };
+            case 'danger':
+                return {
+                    variant: 'contained' as const,
+                    color: 'error' as const,
+                };
+            case 'success':
+                return {
+                    variant: 'contained' as const,
+                    color: 'success' as const,
+                };
+            default:
+                return {
+                    variant: 'outlined' as const,
+                    color: 'primary' as const,
+                };
+        }
+    };
+
+    const { variant: muiVariant, color: muiColor } = getButtonProps();
 
     return (
         <MuiButton
@@ -20,7 +50,7 @@ export const GenericButtonMui: React.FC<GenericButtonProps> = ({
             color={muiColor}
             disabled={disabled}
             className={className}
-            style={{ marginRight: 3 }}
+            sx={{ mr: 1 }}
         >
             {children}
         </MuiButton>

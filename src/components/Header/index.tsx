@@ -1,28 +1,28 @@
 // src/components/Header/index.tsx
-import React, { Suspense } from "react";
-import { useUiLibrary } from "../../context/UiLibraryContext";
+import React, { Suspense } from 'react';
+import { useUiLibrary } from '../../context/UiLibraryContext';
 
-// Para Bootstrap y MUI usamos el mismo Header de Tailwind
-const HeaderTailwind = React.lazy(() => import("./Header.tailwind"));
+const HeaderTailwind = React.lazy(() => import('./Header.tailwind'));
 
 interface HeaderProps {
-  sidebarOpen: string | boolean | undefined;
-  setSidebarOpen: (arg: boolean) => void;
+    sidebarOpen: string | boolean | undefined;
+    setSidebarOpen: (arg: boolean) => void;
 }
 
 const Header: React.FC<HeaderProps> = (props) => {
-  const { library } = useUiLibrary();
+    const { library } = useUiLibrary();
 
-  // Por ahora todas las librerías usan el mismo header
-  // Puedes crear Header.bootstrap.tsx y Header.mui.tsx más adelante si lo necesitas
-  const Component = HeaderTailwind;
+    let Component = HeaderTailwind;
+    // let Component = TailwindPasswordCreate; // default
+    // if (library === 'bootstrap') Component = BootstrapPasswordCreate;
+    // if (library === 'mui') Component = HeaderMui;
 
-  return (
-    <Suspense fallback={<div style={{ height: 80, background: '#fff' }} />}>
-      {/* @ts-ignore */}
-      <Component {...props} />
-    </Suspense>
-  );
+    return (
+        <Suspense fallback={<div style={{ height: 80, background: '#fff' }} />}>
+            {/* @ts-ignore */}
+            <Component {...props} />
+        </Suspense>
+    );
 };
 
 export default Header;
