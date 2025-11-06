@@ -1,10 +1,11 @@
 // src/services/SecurityService.ts
-import axios from "axios";
 import { onAuthStateChanged, signOut, type User as FirebaseUser } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+import api from "../interceptors/axiosInterceptor";
 import { User } from "../models/User";
 import { store } from "../store/store";
 import { setUser } from "../store/userSlice";
+
 
 class SecurityService extends EventTarget {
   keySession: string;
@@ -150,7 +151,7 @@ class SecurityService extends EventTarget {
 
   async login(user: User) {
     try {
-      const response = await axios.post(`${this.API_URL}/login`, user, {
+      const response = await api.post(`${this.API_URL}/login`, user, {
         headers: { "Content-Type": "application/json" },
       });
 
