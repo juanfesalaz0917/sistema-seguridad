@@ -31,13 +31,16 @@ const UpdateProfile = lazy(() => import('../pages/Profile/UpdateProfile'));
 const DevicesList = lazy(() => import('../pages/Devices'));
 const DigitalSignature = lazy(() => import('../pages/DigitalSignature'));
 const SecurityQuestions = lazy(() => import('../pages/SecurityQuestion'));
-
-import ListRolesPermission from "../pages/RolePermission/ListRolePermission";
+const ListPasswords = lazy(() => import('../pages/Password/List'));
+const CreatePasswords = lazy(() => import('../pages/Password/Create'));
+const UpdatePasswords = lazy(() => import('../pages/Password/Update'));
+const ListUserRole = lazy(() => import('../pages/UserRole/List'));
+const AssignUserRole = lazy(() => import('../pages/UserRole/Assign'));
+import ListRolesPermission from '../pages/RolePermission/ListRolePermission';
 import ListSessions from '../pages/Session/ListSession';
 import CreateSession from '../pages/Session/CreateSession';
 import UpdateSession from '../pages/Session/UpdateSession';
 import ViewSession from '../pages/Session/ViewSession';
-
 
 const coreRoutes = [
     {
@@ -116,6 +119,21 @@ const coreRoutes = [
         component: UpdateAddress,
     },
     {
+        path: '/user/passwords/:userId',
+        title: 'List Password',
+        component: ListPasswords,
+    },
+    {
+        path: '/user/passwords/create/:userId',
+        title: 'Create Password',
+        component: CreatePasswords,
+    },
+    {
+        path: '/user/passwords/update/:id',
+        title: 'Update Password',
+        component: UpdatePasswords,
+    },
+    {
         path: '/roles/list',
         title: 'Roles List',
         component: RolesList,
@@ -129,6 +147,16 @@ const coreRoutes = [
         path: '/role/update/:id',
         title: 'Update Role',
         component: RoleUpdate,
+    },
+    {
+        path: '/user-role/:userId',
+        title: 'User Roles',
+        component: ListUserRole,
+    },
+    {
+        path: '/user-role/assign/:userId',
+        title: 'Assign Roles',
+        component: AssignUserRole,
     },
     {
         path: '/calendar',

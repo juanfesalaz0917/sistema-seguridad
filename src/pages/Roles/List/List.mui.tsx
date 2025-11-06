@@ -8,7 +8,6 @@ import {
     Box,
     Paper,
     Typography,
-    Button,
     CircularProgress,
     Alert,
     Stack,
@@ -56,7 +55,11 @@ const RolesList: React.FC = () => {
         if (result.isConfirmed) {
             const success = await roleService.deleteRole(item.id!);
             if (success) {
-                await Swal.fire('Eliminado', 'El rol se ha eliminado', 'success');
+                await Swal.fire(
+                    'Eliminado',
+                    'El rol se ha eliminado',
+                    'success',
+                );
                 fetchData();
             } else {
                 Swal.fire('Error', 'No se pudo eliminar el registro', 'error');
@@ -81,14 +84,25 @@ const RolesList: React.FC = () => {
 
     return (
         <Paper elevation={1} sx={{ overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: 2,
+                    borderBottom: '1px solid rgba(0,0,0,0.08)',
+                }}
+            >
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Typography variant="h6">Roles</Typography>
                 </Stack>
 
                 <Box>
                     <Tooltip title="Add Role">
-                        <IconButton color="primary" onClick={() => navigate('/role/create')}>
+                        <IconButton
+                            color="primary"
+                            onClick={() => navigate('/role/create')}
+                        >
                             <AddIcon />
                         </IconButton>
                     </Tooltip>
@@ -97,7 +111,14 @@ const RolesList: React.FC = () => {
 
             <Box sx={{ p: 2 }}>
                 {loading ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 6 }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            py: 6,
+                        }}
+                    >
                         <CircularProgress />
                     </Box>
                 ) : error ? (
@@ -105,11 +126,14 @@ const RolesList: React.FC = () => {
                 ) : (
                     <GenericTable
                         data={roles}
-                        columns={["id", "name", "description"]}
+                        columns={['id', 'name', 'description']}
                         actions={[
                             { name: 'update', label: 'Update' },
                             { name: 'delete', label: 'Delete' },
-                            { name: 'assignPermissions', label: 'Assign Permissions' },
+                            {
+                                name: 'assignPermissions',
+                                label: 'Assign Permissions',
+                            },
                         ]}
                         onAction={handleAction}
                     />
