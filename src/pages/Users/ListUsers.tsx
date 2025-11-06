@@ -100,19 +100,18 @@ const ListUsers: React.FC = () => {
 
     const columns = ['id', 'name', 'email'];
 
-    const actions: Action[] = [
-        { name: 'view', label: 'Ver' },
-        { name: 'viewRoles', label: 'Ver Roles' },
-        { name: 'edit', label: 'Editar' },
-        { name: 'delete', label: 'Eliminar' },
-        { name: 'profile', label: 'Perfil' },
-        { name: 'address', label: 'Dirección' },
-        { name: 'digital-signature', label: 'Firma Digital' },
-        { name: 'devices', label: 'Dispositivos' },
-        { name: 'passwords', label: 'Contraseñas' },
-        { name: 'security-questions', label: 'Seguridad' },
-        { name: 'sessions', label: 'Sesiones' },
-    ];
+  const actions: Action[] = [
+    { name: "view", label: "Ver" },
+    { name: "edit", label: "Editar" },
+    { name: "delete", label: "Eliminar" },
+    { name: "profile", label: "Perfil" },
+    { name: "address", label: "Dirección" },
+    { name: "digital-signature", label: "Firma Digital" },
+    { name: "devices", label: "Dispositivos" },
+    { name: "passwords", label: "Contraseñas" },
+    { name: "security-questions", label: "Seguridad" },
+    { name: "sessions", label: "Sesiones" }
+  ];
 
     return (
         <div className="card">

@@ -7,6 +7,7 @@ import { userService } from "../../services/userService";
 import { profileService } from "../../services/profileService";
 import Breadcrumb from '../../components/Breadcrumb';
 import { useNavigate } from "react-router-dom";
+import UserFormSwitcher from '../../components/UserForm';
 
 const CreateUser: React.FC = () => {
     const navigate = useNavigate();
@@ -61,9 +62,8 @@ const CreateUser: React.FC = () => {
 
     return (
         <div>
-            <h2>Create User</h2>
             <Breadcrumb pageName="Crear Usuario" />
-            <UserFormValidator
+            <UserFormSwitcher
                 handleCreate={handleCreateUser}
                 mode={1} // 1 significa creación
             />
