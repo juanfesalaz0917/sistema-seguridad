@@ -58,7 +58,7 @@ const ListUsers: React.FC = () => {
                 navigate(`/user/passwords/${item.id}`);
                 break;
             case 'sessions':
-                navigate(`/user/sessions/${item.id}`);
+                navigate(`/sessions/user/${item.id}`);
                 break;
             default:
                 console.log(action, item);
