@@ -3,7 +3,6 @@ import React, { Suspense } from 'react';
 import { useUiLibrary } from '../../context/UiLibraryContext';
 
 const HeaderTailwind = React.lazy(() => import('./Header.tailwind'));
-const HeaderMui = React.lazy(() => import('./Header.mui'));
 
 interface HeaderProps {
     sidebarOpen: string | boolean | undefined;
@@ -16,7 +15,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     let Component = HeaderTailwind;
     // let Component = TailwindPasswordCreate; // default
     // if (library === 'bootstrap') Component = BootstrapPasswordCreate;
-    if (library === 'mui') Component = HeaderMui;
+    // if (library === 'mui') Component = HeaderMui;
 
     return (
         <Suspense fallback={<div style={{ height: 80, background: '#fff' }} />}>
